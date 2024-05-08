@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Park Freender ",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ParkFreender"
+  },
+  "author": "Alessandro Brognara",
+  "license": "UNITN",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
