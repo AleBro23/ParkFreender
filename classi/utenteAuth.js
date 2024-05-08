@@ -15,10 +15,16 @@ class UtenteAuth extends Utente{
         if(!this.veicoli.has(veicolo)){
             this.veicoli.add(veicolo);
         }
+        else{
+            console.log("veicolo esistente");
+        }
     }
     rmVeicolo(veicolo){
         if(this.veicoli.has(veicolo)){
             this.veicoli.delete(veicolo);
+        }
+        else{
+            console.log("veicolo non esistente");
         }
     }
     buyTicket(){

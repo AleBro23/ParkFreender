@@ -12,10 +12,16 @@ export default class sgp{
         if(!this.setParcheggio.has(parcheggio)){ //aggiungo solo se non c'è già
             this.setParcheggio.add(parcheggio);
         }
+        else{
+            console.log("parcheggio già esistente");
+        }
     }
     removeParcheggio(parcheggio){
         if(this.setParcheggio.has(parcheggio)){
             this.setParcheggio.delete(parcheggio);
+        }
+        else{
+            console.log("parcheggio non esistente");
         }
     }
 
@@ -31,6 +37,9 @@ export default class sgp{
     removeRecensione(parcheggio, recensione){
         if(this.mappaRecensioni.has(parcheggio)){
             this.mappaRecensioni.get(parcheggio).delete(recensione);
+        }
+        else{
+            console.log("recensione non esistente");
         }
     }
     addStat(parcheggio, stat){
