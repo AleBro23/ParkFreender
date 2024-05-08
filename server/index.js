@@ -16,4 +16,3 @@ app.use('/api/posts', posts); //re-indirizza le richieste all'endpoint posts.js
 const port = process.env.PORT || 5000; //localhost
 
 app.listen(port, () => console.log(`Server startato sulla porta ${port}`));
-porco dio
