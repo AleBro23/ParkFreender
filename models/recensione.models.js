@@ -7,7 +7,7 @@ const RecensioneSchema = mongoose.Schema(
             required: true,
         },
         valutazione: {
-            type: String,
+            type: Number,
             required: true,
         },
     },

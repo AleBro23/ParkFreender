@@ -4,7 +4,7 @@ const app = express();
 //models
 const Recensione = require('./models/recensione.models');
 
-app.use(express.json); 
+app.use(express.json()); 
 
 
 app.get('/', (req, res) => { //richiesta all url '/'
@@ -22,7 +22,6 @@ app.post('/addrec/api', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-
 
 
 mongoose.
