@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const Parcheggio = require("./models/parcheggio.models");
+const parcheggioRoute = require('./routes/parcheggio.routes');
 const app = express();
 //models
 const Recensione = require('./models/recensione.models');
@@ -7,20 +9,12 @@ const Recensione = require('./models/recensione.models');
 app.use(express.json()); 
 
 
+//routes
+app.use('api/parcheggi', parcheggioRoute);
+
+
 app.get('/', (req, res) => { //richiesta all url '/'
     res.send("Test in notturna");
-});
-
-
-//PROVA ADD DB
-app.post('/addrec/api', async (req, res) => {
-    try{
-        const recensione = await Recensione.create(req.body);
-        res.status(200).json(recensione);
-    }
-    catch(error){
-        res.status(500).json({message: error.message});
-    }
 });
 
 
