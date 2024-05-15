@@ -11,7 +11,7 @@
     "type": "git",
     "url": "ParkFreender"
   },
-  "author": "Alessandro Brognara",
+  "author": "Alessandro Brognara, Konstantinos Zefkilis, Luca Pio Pierno",
   "license": "UNITN",
   "dependencies": {
     "body-parser": "^1.20.2",
