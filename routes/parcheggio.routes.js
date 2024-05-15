@@ -9,7 +9,8 @@ router.get('/:id', getParcheggio);
 router.get('/:id/recensioni', getRecensioniParcheggio);
 router.get(':id/stats', getStatParcheggio);
 
-
+//POST
+router.post('/:id/recensioni', addRecensione);
 
 
 

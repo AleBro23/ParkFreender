@@ -67,9 +67,37 @@ const getStatParcheggio = async (req, res) =>{
 };
 
 
+//POST (add)
+//aggiunge una recensione per un determinato parcheggio
+const addRecensione = async (req, res) =>{
+    try{
+        const {id} = req.params; //id parcheggio
+        const parcheggio = await Parcheggio.findById(id);
+
+        if(!parcheggio){
+            return res.status(404).json({ message: 'Parcheggio non trovato'})
+        }
+
+        //creo una nuova recensione
+        const newRecensione = new Recensione({
+            descrizione: req.body.descrizione,
+            valutazione: req.body.valutazione
+        });
+        //salvo la recensione
+        const recensioneSalvata = await newRecensione.save();
+        //aggiungo l'ID all'array di recensioni del park
+        parcheggio.recensioni.push(recensioneSalvata.id);
+        await parcheggio.save();
+
+        res.stats(201).json({ message: 'Recensione aggiunta con successo'});
+    }
+    catch(error){
+        res.status(500).json({ message: error.message});
+    }
+};
 
 
 //export
 module.exports = {
-    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio,
+    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio, addRecensione
 }
