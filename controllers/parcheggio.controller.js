@@ -96,8 +96,64 @@ const addRecensione = async (req, res) =>{
     }
 };
 
+//aggiunge un parcheggio
+const addParcheggio = async (req, res) =>{
+    try{
+        const { nome, capacita, disponibilita, posizione, tipologia, sosta, capacitaCamper, image } = req.body;
+        //creo un nuovo parcheggio
+        const nuovoParcheggio = new Parcheggio({
+            nome,
+            capacita,
+            disponibilita,
+            posizione,
+            tipologia,
+            sosta,
+            capacitaCamper,
+            image
+        });
+        //salvo nel DB
+        await nuovoParcheggio.save();
+
+        res.status(201).json({ message: 'Parcheggio aggiunto con successo', parcheggio: nuovoParcheggio });
+    }
+    catch(error){
+        res.status(500).json({ message: error.message});
+    }
+};
+
+//PUT (update)
+//aggiorna una recensione
+const updateRecensione = async (req, res) =>{
+    try{
+        const idParcheggio = req.params.idParcheggio;
+        const idRecensione = req.params.idRecensione;
+        const {descrizione, valutazione} = req.body; //dati aggiornati passati nel corpo della richiesta
+
+        const parcheggio = await Parcheggio.findById(idParcheggio);
+
+        if (!parcheggio) {
+            return res.status(404).json({ message: 'Parcheggio non trovato' });
+        }
+
+        const recensioneDaAggiornare = parcheggio.recensioni.find(recensione => recensione.equals(idRecensione));
+    
+        if(!recensioneDaAggiornare){
+            return res.status(404).json({ message: 'Recensione non trovata' });
+        }
+        //update
+        recensioneDaAggiornare.descrizione = descrizione;
+        recensioneDaAggiornare.valutazione = valutazione;
+
+        await parcheggio.save(); //salvo il parcheggio aggiornato
+        res.stattus(200).json({ message: 'recensione aggiornata'});
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Errore del server' });
+    }
+};
+
 
 //export
 module.exports = {
-    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio, addRecensione
+    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio, addRecensione, addParcheggio, updateRecensione,
 }

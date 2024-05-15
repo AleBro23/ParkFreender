@@ -11,7 +11,10 @@ router.get(':id/stats', getStatParcheggio);
 
 //POST
 router.post('/:id/recensioni', addRecensione);
+router.post('/add/nuovopark', addParcheggio);
 
+//PUT
+router.put(':id/recensioni/:id', updateRecensione);
 
 
 module.exports = router;
