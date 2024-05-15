@@ -18,10 +18,6 @@ const ParcheggioSchema = mongoose.Schema(
             required: true,
             default: 0,
         },
-        posizione: {
-            type: [Number],
-            required: true,
-        },
         tipologia: {
             type: String,
             required: true,
@@ -41,11 +37,13 @@ const ParcheggioSchema = mongoose.Schema(
         },
         recensioni: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Recensione'
+            ref: 'Recensione',
+            required: false,
         }],
         stats: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Stat'
+            ref: 'Stat',
+            required: false,
         }]
     },
     {

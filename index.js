@@ -1,16 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Parcheggio = require("./models/parcheggio.models");
 const parcheggioRoute = require('./routes/parcheggio.routes');
 const app = express();
 //models
+const Parcheggio = require("./models/parcheggio.models");
 const Recensione = require('./models/recensione.models');
 
 app.use(express.json()); 
 
 
 //routes
-app.use('api/parcheggi', parcheggioRoute);
+app.use('/parcheggi', parcheggioRoute);
 
 
 app.get('/', (req, res) => { //richiesta all url '/'
