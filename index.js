@@ -22,7 +22,7 @@ app.use('/parcheggi', parcheggioRoute);
 app.use('/utente', utenteRoute);
 
 app.get('/', (req, res) => { //richiesta all url '/'
-    res.sendFile(path.join(__dirname, 'public', 'principale.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index_ParkFreender.html'));
 });
 
 
