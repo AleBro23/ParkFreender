@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path')
 const app = express();
 
 //routes
@@ -10,7 +11,10 @@ const Parcheggio = require("./models/parcheggio.models");
 const Utente = require('./routes/utente.routes');
 const Recensione = require('./models/recensione.models');
 
+//middleware
 app.use(express.json()); 
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 //routes
@@ -18,7 +22,7 @@ app.use('/parcheggi', parcheggioRoute);
 app.use('/utente', utenteRoute);
 
 app.get('/', (req, res) => { //richiesta all url '/'
-    res.send("Test in notturna");
+    res.sendFile(path.join(__dirname, 'public', 'principale.html'));
 });
 
 
