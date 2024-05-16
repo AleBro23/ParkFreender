@@ -6,7 +6,7 @@ function signIn(){
 
     let params = {
         "client_id":"991545223863-9l6nujmo3l2eqkm9buek2frvvadu7ujd.apps.googleusercontent.com",
-        "redirect_uri":"http://127.0.0.1:8080/profile.html",
+        "redirect_uri":"http://127.0.0.1:8080/profile_ParkFreender.html",
         "response_type":"token",
         "scope":"https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.readonly", // Aggiunto scope email
         "include_granted_scopes":'true',
