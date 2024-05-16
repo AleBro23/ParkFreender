@@ -47,7 +47,7 @@
         <h1>ParkFreender</h1>
         <nav>
             <div class="nav-container">
-                <a href="principale.html">Home</a>
+                <a href="public/index_ParkFreender.html">Home</a>
                 <a href="ParkFree.html" class="current">ParkFree</a>
                 <a href="#parkpay">ParkPay</a>
                 <a href="#contact">Contatti</a>
@@ -77,7 +77,7 @@
                 // Aggiungi i dati all'elemento div
                 parcheggi.forEach(parcheggio => {
                     const link = document.createElement('a');
-                    link.href = `Park.html?id=${parcheggio._id}`;  // Assuming you want to pass the id to Park.html
+                    link.href = `Park.html?id=${parcheggio._id}`;  
 
                     const h3 = document.createElement('h3');
                     h3.textContent = `${parcheggio.nome}: (${parcheggio.distanza} km di distanza) (Disponibilità ${parcheggio.disponibilita} posti)`;

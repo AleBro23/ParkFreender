@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path')
+const path = require('path');
 const app = express();
 
 //routes
@@ -8,7 +8,7 @@ const parcheggioRoute = require('./routes/parcheggio.routes');
 const utenteRoute = require('./routes/utente.routes');
 //models
 const Parcheggio = require("./models/parcheggio.models");
-const Utente = require('./routes/utente.routes');
+const Utente = require('./models/utente.models');
 const Recensione = require('./models/recensione.models');
 
 //middleware
