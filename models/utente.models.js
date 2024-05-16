@@ -13,11 +13,17 @@ const UtenteSchema = mongoose.Schema(
         },
         password: {
             type: String,
-            required: true,
+            required: false,
         },
+        recensioni: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Recensione',
+            required: false,
+        }],
         veicoli: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Veicolo'
+            ref: 'Veicolo',
+            required: false
         }],
     },
     {

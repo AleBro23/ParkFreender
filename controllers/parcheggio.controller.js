@@ -1,5 +1,6 @@
 const Parcheggio = require('../models/parcheggio.models');
 const Recensione = require('../models/recensione.models');
+const Utente = require('../models/utente.models');
 
 //GET
 //restituisce i parcheggi e tutte le loro informazioni
@@ -71,25 +72,30 @@ const getStatParcheggio = async (req, res) =>{
 //aggiunge una recensione per un determinato parcheggio
 const addRecensione = async (req, res) =>{
     try{
-        const {id} = req.params; //id parcheggio
-        const parcheggio = await Parcheggio.findById(id);
+        const idParcheggio = req.params.idP;
+        const idUtente = req.params.idU;
+        const parcheggio = await Parcheggio.findById(idParcheggio);
+        const utente = await Utente.findById(idUtente);
 
-        if(!parcheggio){
-            return res.status(404).json({ message: 'Parcheggio non trovato'})
+        if(!parcheggio || !utente){
+            return res.status(404).json({ message: 'Parcheggio o utente non trovato'})
         }
 
         //creo una nuova recensione
         const newRecensione = new Recensione({
+            utente: idUtente,
             descrizione: req.body.descrizione,
             valutazione: req.body.valutazione
         });
         //salvo la recensione
         const recensioneSalvata = await newRecensione.save();
-        //aggiungo l'ID all'array di recensioni del park
+        //aggiungo l'ID all'array di recensioni del park e utente
         parcheggio.recensioni.push(recensioneSalvata.id);
+        utente.recensioni.push(recensioneSalvata.id);
         await parcheggio.save();
+        await utente.save();
 
-        res.stats(201).json({ message: 'Recensione aggiunta con successo'});
+        res.status(201).json({ message: 'Recensione aggiunta con successo'});
     }
     catch(error){
         res.status(500).json({ message: error.message});
@@ -106,7 +112,7 @@ const addParcheggio = async (req, res) =>{
             capacita,
             disponibilita,
             posizione,
-            tipologia,
+            tipologia,//
             sosta,
             capacitaCamper,
             image
@@ -153,7 +159,42 @@ const updateRecensione = async (req, res) =>{
 };
 
 
+//DELETE
+//cancella una recensione
+const deleteRecensione = async (req, res) =>{
+    try{
+        const { idP, idU, idR } = req.params;
+
+        const parcheggio = await Parcheggio.findByIdAndUpdate(
+            idP, 
+            { $pull: { recensioni: idR} },
+            { new: true}
+        );
+        const utente = await Utente.findByIdAndUpdate(
+            idU,
+            { $pull: { recensioni: idR } },
+            { new: true}
+        );
+
+        if (!parcheggio || !utente) {
+            return res.status(404).json({ message: 'Parcheggio o utente non trovato' });
+        }
+        
+        const recensione = await Recensione.findByIdAndDelete(idR);
+        
+        if(!recensione){
+            return res.status(404).json({ messege: 'Recensione non trovata'})
+        }
+
+        res.status(200).json({ message: 'recensione eliminata'})
+    }
+    catch(error){
+        res.status(500).json({ message: 'Errore del server'});
+    }
+};
+
+
 //export
 module.exports = {
-    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio, addRecensione, addParcheggio, updateRecensione,
+    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio, addRecensione, addParcheggio, updateRecensione, deleteRecensione, 
 }

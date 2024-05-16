@@ -19,7 +19,28 @@ const getUtente = async (req, res) =>{
 };
 
 
-
+//POST (add)
+//aggiunge un utente
+const addUtente = async (req, res) =>{
+    try{
+        const { username, email, password, recensioni, veicoli} = req.body;
+        //creo un nuovo utente
+        const nuovoUtente = new Utente({
+            username,
+            email,
+            password,
+            recensioni,
+            veicoli
+        });
+        //salvo nel DB
+        await nuovoUtente.save();
+        
+        res.status(201).json({ message: 'utente creato con successo'});
+    }
+    catch(error){
+        res.status(500).json({ message: error.message});
+    }
+};
 
 
 
@@ -30,5 +51,5 @@ const getUtente = async (req, res) =>{
 
 //export
 module.exports = {
-
+    getUtente, addUtente,
 }

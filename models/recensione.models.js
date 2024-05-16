@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const RecensioneSchema = mongoose.Schema(
     {
+        utente: {
+            type: String,
+            required: false,
+        },
         descrizione: {
             type: String,
             required: true,
