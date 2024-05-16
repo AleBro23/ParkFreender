@@ -131,27 +131,20 @@ const addParcheggio = async (req, res) =>{
 //aggiorna una recensione
 const updateRecensione = async (req, res) =>{
     try{
-        const idParcheggio = req.params.idParcheggio;
-        const idRecensione = req.params.idRecensione;
-        const {descrizione, valutazione} = req.body; //dati aggiornati passati nel corpo della richiesta
+        const idRecensione = req.params.idR;
+        const { descrizione, valutazione } = req.body;
+        
+        const recensioneAggiornata = await Recensione.findByIdAndUpdate(
+            idRecensione,
+            { descrizione, valutazione },
+            { new: true, runValidators: true }
+        );
 
-        const parcheggio = await Parcheggio.findById(idParcheggio);
-
-        if (!parcheggio) {
-            return res.status(404).json({ message: 'Parcheggio non trovato' });
-        }
-
-        const recensioneDaAggiornare = parcheggio.recensioni.find(recensione => recensione.equals(idRecensione));
-    
-        if(!recensioneDaAggiornare){
+        if (!recensioneAggiornata) {
             return res.status(404).json({ message: 'Recensione non trovata' });
         }
-        //update
-        recensioneDaAggiornare.descrizione = descrizione;
-        recensioneDaAggiornare.valutazione = valutazione;
 
-        await parcheggio.save(); //salvo il parcheggio aggiornato
-        res.stattus(200).json({ message: 'recensione aggiornata'});
+        res.status(200).json({ message: 'Recensione aggiornata', recensione: recensioneAggiornata });
     }
     catch (error) {
         res.status(500).json({ message: 'Errore del server' });
