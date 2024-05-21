@@ -1,12 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-<<<<<<< Updated upstream
-const path = require('path')
-=======
 const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
->>>>>>> Stashed changes
 const app = express();
 
 //routes
@@ -14,7 +10,7 @@ const parcheggioRoute = require('./routes/parcheggio.routes');
 const utenteRoute = require('./routes/utente.routes');
 //models
 const Parcheggio = require("./models/parcheggio.models");
-const Utente = require('./routes/utente.routes');
+const Utente = require('./models/utente.models');
 const Recensione = require('./models/recensione.models');
 
 //middleware
@@ -28,7 +24,7 @@ app.use('/parcheggi', parcheggioRoute);
 app.use('/utente', utenteRoute);
 
 app.get('/', (req, res) => { //richiesta all url '/'
-    res.sendFile(path.join(__dirname, 'public', 'principale.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index_ParkFreender.html'));
 });
 
 

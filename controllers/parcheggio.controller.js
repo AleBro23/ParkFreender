@@ -35,19 +35,20 @@ const getParcheggio= async (req, res) =>{
 const getRecensioniParcheggio = async (req, res) =>{
     try{
         const {id} = req.params;
+        //oltre agli id ci sono anche i dati di recensioni con la populate (join)
         const parcheggio = await Parcheggio.findById(id).populate('recensioni');
-        
+
         if(!parcheggio){
             return res.status(404).json({message: 'Parcheggio non trovato'});
         }
         
         const recensioni = parcheggio.recensioni;
-        res.status(200).json(recensioni);
-        }
-        catch(error){
-            res.status(500).json({ message: error.message});
-        }
+        res.status(200).json(recensioni); //ritorno le recensioni
     }
+    catch(error){
+        res.status(500).json({ message: error.message});
+    }
+}
 
 //restituisce le statistiche di un parcheggio 
 const getStatParcheggio = async (req, res) =>{
@@ -132,19 +133,19 @@ const addParcheggio = async (req, res) =>{
 const updateRecensione = async (req, res) =>{
     try{
         const idRecensione = req.params.idR;
-        const { descrizione, valutazione } = req.body;
+        const { descrizione, valutazione } = req.body; //input dal front end
         
         const recensioneAggiornata = await Recensione.findByIdAndUpdate(
             idRecensione,
             { descrizione, valutazione },
-            { new: true, runValidators: true }
+            { new: true, runValidators: true } //runvalidators a true controlla che i dati rispettino i parametri imposti nello schema
         );
 
         if (!recensioneAggiornata) {
             return res.status(404).json({ message: 'Recensione non trovata' });
         }
 
-        res.status(200).json({ message: 'Recensione aggiornata', recensione: recensioneAggiornata });
+        res.status(200).json({ message: 'Recensione aggiornata', recensione: recensioneAggiornata }); //ritorno recensione aggiornata per aggiornare front end
     }
     catch (error) {
         res.status(500).json({ message: 'Errore del server' });
@@ -160,8 +161,8 @@ const deleteRecensione = async (req, res) =>{
 
         const parcheggio = await Parcheggio.findByIdAndUpdate(
             idP, 
-            { $pull: { recensioni: idR} },
-            { new: true}
+            { $pull: { recensioni: idR} }, //pull elimina la recensione dalla lista
+            { new: true} //aggiorna l'array di recensioni del parcheggio
         );
         const utente = await Utente.findByIdAndUpdate(
             idU,
@@ -173,13 +174,13 @@ const deleteRecensione = async (req, res) =>{
             return res.status(404).json({ message: 'Parcheggio o utente non trovato' });
         }
         
-        const recensione = await Recensione.findByIdAndDelete(idR);
+        const recensione = await Recensione.findByIdAndDelete(idR); //cancella la recensione dal DB
         
         if(!recensione){
             return res.status(404).json({ messege: 'Recensione non trovata'})
         }
 
-        res.status(200).json({ message: 'recensione eliminata'})
+        res.status(200).json({ message: 'Recensione eliminata'})
     }
     catch(error){
         res.status(500).json({ message: 'Errore del server'});
