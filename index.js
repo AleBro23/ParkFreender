@@ -1,6 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+<<<<<<< Updated upstream
 const path = require('path')
+=======
+const path = require('path');
+const dotenv = require('dotenv');
+dotenv.config();
+>>>>>>> Stashed changes
 const app = express();
 
 //routes
@@ -28,8 +34,7 @@ app.get('/', (req, res) => { //richiesta all url '/'
 
 mongoose.
 connect(
-    'mongodb+srv://alebrogna02:mfke3Lcwgb7EPAzF@backendparkfreender.hxqjtbp.mongodb.net/?retryWrites=true&w=majority&appName=BackEndParkFreender'
-)
+    'mongodb+srv://alebrogna02:mfke3Lcwgb7EPAzF@backendparkfreender.hxqjtbp.mongodb.net/?retryWrites=true&w=majority&appName=BackEndParkFreender')
 .then(() => {
     console.log("Connesso al database");
     //ora connetto al server
