@@ -26,13 +26,13 @@ async function aggiornaDispParcheggi(){
     }
 }
 
-const intervallAggiornamento = 5 * 60 * 1000; //intervallo in millisecondi (5 min)
+const intervalloAggiornamento = 1 * 60 * 1000; //intervallo in millisecondi (5 min)
 
 function avvioAggiornamentoPeriodico(){
     aggiornaDispParcheggi(); //funzione aggiornamento
 
     //richiama la funzione ogni t = intervalloAggiornamento
-    setInterval(aggiornaDispParcheggi, intervallAggiornamento);
+    setInterval(aggiornaDispParcheggi, intervalloAggiornamento);
 }
 
 
