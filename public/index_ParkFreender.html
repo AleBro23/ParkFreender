@@ -6,17 +6,12 @@
     <!--- custom css link-->
     <link rel="stylesheet" type="text/css" href="styles.css">
     <!--- boxicon link -->
-    <link rel="stylesheet"
-    href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
-    rel="stylesheet"/>
-
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <!--- google font link -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-    <link href="https://fonts.googleapis.com/css2?
-    family=Open+Sans: wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <script>
@@ -25,30 +20,98 @@
         let info = JSON.parse(localStorage.getItem('authInfo'));
         if (info && info['access_token']) {
             // L'utente è loggato, quindi cambia il pulsante di login in logout
-            document.querySelector('.buttonl').innerHTML = 'Log-out';
-            document.querySelector('.buttonl').setAttribute('onclick', 'logout()');
+            document.querySelector('.loginButton .loginButton-content').innerHTML = 'Log-out';
+            document.querySelector('.loginButton').setAttribute('onclick', 'logout()');
         } else {
             // L'utente non è loggato, quindi mostra il pulsante di login
-            document.querySelector('.buttonl').innerHTML = 'Sign In With Google';
-            document.querySelector('.buttonl').setAttribute('onclick', 'signIn()');
+            document.querySelector('.loginButton .loginButton-content').innerHTML = 'Sign In With Google';
+            document.querySelector('.loginButton').setAttribute('onclick', 'signIn()');
         }
     }
-    
-    function logout(){
+
+    function logout() {
         let info = JSON.parse(localStorage.getItem('authInfo'));
-        fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'],{
-            method:'POST',
-            headers:{
-                'Content-type':'application/x-www-form-urlencoded'
+        fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
             }
-        })
-        .then((data) => {
+        }).then((data) => {
             // Rimuovi le informazioni dell'utente dal localStorage
             localStorage.removeItem('authInfo');
             // Reindirizza l'utente alla pagina di login
             location.href = "http://localhost:8080/index_ParkFreender.html"
         })
     }
+
+    // Menu toggle
+    document.addEventListener("DOMContentLoaded", () => {
+        const header = document.querySelector("header");
+        window.addEventListener("scroll", function() {
+            header.classList.toggle("sticky", window.scrollY > 60);
+        });
+
+        let menu = document.querySelector('#menu-icon');
+        let navbar = document.querySelector('.navbar');
+        menu.onclick = () => {
+            menu.classList.toggle('bx-x');
+            navbar.classList.toggle('open');
+        };
+
+        // Carica i dati dei parcheggi e li mostra
+        fetch('/parcheggi')
+            .then(response => response.json())
+            .then(parcheggi => {
+                const topParcheggi = parcheggi.sort((a, b) => b.valutazione - a.valutazione).slice(0, 4);
+                const parcheggiContainer = document.querySelector('.popular-content');
+                parcheggiContainer.innerHTML = '';
+
+                topParcheggi.forEach(parcheggio => {
+                    const box = document.createElement('div');
+                    box.className = 'box';
+
+                    const img = document.createElement('img');
+                    img.src = parcheggio.image; // Assumendo che l'API restituisca l'URL dell'immagine
+                    img.alt = parcheggio.nome;
+                    box.appendChild(img);
+
+                    const capacity = document.createElement('h6');
+                    capacity.textContent = `${parcheggio.disponibilita}/${parcheggio.capacita}`;
+                    box.appendChild(capacity);
+
+                    const name = document.createElement('h4');
+                    name.textContent = parcheggio.nome;
+                    box.appendChild(name);
+
+                    parcheggiContainer.appendChild(box);
+                });
+            })
+            .catch(error => {
+                console.error('Errore nel recuperare i parcheggi:', error);
+            });
+
+        // Form recensione
+        document.querySelector('.review-form').addEventListener('submit', function(event) {
+            const ratingInputs = document.querySelectorAll('.rating input[type="radio"]');
+            let ratingSelected = false;
+            ratingInputs.forEach(function(input) {
+                if (input.checked) {
+                    ratingSelected = true;
+                }
+            });
+
+            if (!ratingSelected) {
+                event.preventDefault();
+                alert('Please select a rating.');
+            }
+
+            const reviewContent = document.getElementById('reviewContent').value;
+            if (reviewContent.length > 400) {
+                event.preventDefault();
+                alert('Review Content must be maximum 400 characters.');
+            }
+        });
+    });
 </script>
 
 <body>
@@ -56,7 +119,7 @@
     <!---header design-->
     <header>
         <a href="#" class="logo">PARK<span>Freender</span></a>
-        
+
         <ul class="navbar">
             <li><a href="index_ParkFreender.html">Home</a></li>
             <li><a href="parkFree_ParkFreender.html">ParkFree</a></li>
@@ -65,7 +128,7 @@
         </ul>
 
         <div class="h-right">
-            <button class="loginButton" onclick="signIn()">
+            <button class="loginButton">
                 <span class="loginButton-content">Sign-up with Google</span>
             </button>
             <a href="#"><i class="ri-github-fill"></i></a>
@@ -82,77 +145,66 @@
             <h5>Let's</h5>
             <h1>Finding the parking <br> perfect for you</h1>
             <p>Our aim is to implement innovative and efficient solutions to make it easier for residents and visitors to the city of Trento <br> to find parking spaces, thus contributing to improving the quality of urban life and reducing the inconvenience of finding available parking spaces.</p>
-            <a class="swipe">Find Parking <span class="container"><svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path></svg></span> </a>
+            <a class="swipe">Find Parking <span class="container"><svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
+                    </svg></span> </a>
         </div>
     </section>
 
     <!--- Dov'è l'utente -->
-    <section class="userMap"> 
-        <div class="userMap-img"> 
+    <section class="userMap">
+        <div class="userMap-img">
             <img src="Image/Home/Mappa_example.png">
         </div>
-            
+
         <div class="userMap-text">
             <h5>PARKFREENDER SERVICE</h5>
             <h2>You are here, <br> Via Rosmini 15</h2>
             <p>In Trento, you can find a variety of car parks to meet your parking needs. Among the available options are pay car parks located in central areas of the city, underground car parks affiliated with commercial facilities. In addition, there are car parks reserved for subscribers and paid parking solutions via the web application. Click the button to see the various options.</p>
-            <a class="swipe">All Parking <span class="container"><svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path></svg></span> </a>
+            <a class="swipe">All Parking <span class="container"><svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
+                    </svg></span> </a>
         </div>
     </section>
 
-    
-
-    <!--Popular parking design --> 
+    <!--Popular parking design -->
     <section class="popular">
         <div class="center-text">
             <h2>Popular Parking</h2>
         </div>
-    
+
         <div class="popular-content">
-            <div class="box">
-                <img src="Image/Home/FotoParcheggi/sanSeverino.png"> 
-                <h6>173/355</h6> 
-                <h4>San Severino</h4>
-            </div>
-
-            <div class="box">
-                <img src="Image/Home/FotoParcheggi/monteBaldo.png"> 
-                <h6>56/85</h6> 
-                <h4>Monte Baldo</h4>
-            </div>
-
-            <div class="box">
-                <img src="Image/Home/FotoParcheggi/exZuffo.png"> 
-                <h6>125/300</h6> 
-                <h4>Ex Zuffo</h4>
-            </div>
+            <!-- I contenuti dei parcheggi popolari verranno inseriti dinamicamente qui -->
         </div>
 
         <div class="center-btn">
-            <a href="https://www.tuosito.com"> 
+            <a href="https://www.tuosito.com">
                 <button class="exploreButton">
-                    <svg class="svgIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm50.7-186.9L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"></path></svg>
+                    <svg class="svgIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm50.7-186.9L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"></path>
+                    </svg>
                     Explore
                 </button>
-            </a>          
+            </a>
         </div>
-        
-    </section>
 
+    </section>
 
     <!--- Best users section design-->
     <section class="bestUsers">
         <div class="center-text">
             <h2 class="best-users-title">Most active users</h2>
         </div>
-        <div class="bestUsers-content"> 
+        <div class="bestUsers-content">
             <div class="row">
                 <div class="row-img">
                     <img src="Image/Home/Profile_image_examples/pr1.png">
                 </div>
                 <h4>#1 Martina Tzolakis</h4>
             </div>
-            
+
             <div class="row">
                 <div class="row-img">
                     <img src="Image/Home/Profile_image_examples/pr2.png">
@@ -176,39 +228,40 @@
         </div>
     </section>
 
-    
-    <!---culture section design--> 
+    <!---culture section design-->
     <section class="Culture">
         <div class="Culture-text">
             <h5>PARK FREENDER</h5>
             <h2>Simplifying Parking in Trento</h2>
-            <p>We, Konstantinos Zefkilis, Alessandro Brognara, and Luca Pierno Pio, students from the University of Trento, developed ParkFreender, a user-friendly web app for convenient parking in Trento. It simplifies parking with features like mapping available spaces and directions, aiming to enhance urban mobility and make Trento more accessible.</p> 
-            <a class="swipe">Our Story <span class="container"><svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path></svg></span> </a>
+            <p>We, Konstantinos Zefkilis, Alessandro Brognara, and Luca Pierno Pio, students from the University of Trento, developed ParkFreender, a user-friendly web app for convenient parking in Trento. It simplifies parking with features like mapping available spaces and directions, aiming to enhance urban mobility and make Trento more accessible.</p>
+            <a class="swipe">Our Story <span class="container"><svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
+                    </svg></span> </a>
         </div>
-    
-    <div class="Culture-img",>
-        <img src="Image/Home/trento.png">
-    </div>
+
+        <div class="Culture-img">
+            <img src="Image/Home/trento.png">
+        </div>
     </section>
 
-    
-    <!---newsletter section design--> 
+    <!---newsletter section design-->
     <section class="newsletter">
-        <div class="newsletter-content"> 
+        <div class="newsletter-content">
             <div class="newsletter-text">
                 <h2>Ready to explore?</h2>
                 <p>Let's go on vacation, make your day</p>
             </div>
-            
+
             <form action="">
                 <input type="email" placeholder="Enter your email..." required>
-                <input type="submit" value="Get started" class="btn"> 
+                <input type="submit" value="Get started" class="btn">
             </form>
         </div>
     </section>
 
     <!--- custom js file link -->
-    <script src="script.js"></script>
+    <script src="scriptIndex.js"></script>
     <script src="scriptLoginGoogle.js"></script>
 </body>
 
