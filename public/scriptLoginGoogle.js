@@ -83,6 +83,6 @@ window.onload = async function () {
         await checkOrAddUser(profile);
 
         // Reindirizza l'utente alla sua area personale
-        window.location.href = '/user_dashboard.html';
+        window.location.href = '/profile_ParkFreender.html';
     }
 };
