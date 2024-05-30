@@ -28,7 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             box.className = 'box';
 
             const img = document.createElement('img');
-            img.src = parcheggio.image; // Assumendo che l'API restituisca l'URL dell'immagine
+            // Costruisce l'URL dell'immagine
+            img.src = `/public/${parcheggio.image}`;
             img.alt = parcheggio.nome;
             box.appendChild(img);
 

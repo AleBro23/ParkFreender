@@ -1,7 +1,7 @@
 const express = require('express');
 const Parcheggio = require('../models/parcheggio.models');
 const router = express.Router();
-const {getParcheggi, getParcheggio, getStatParcheggio, addRecensione, getRecensioniParcheggio, updateRecensione, addParcheggio, deleteRecensione} = require('../controllers/parcheggio.controller');
+const {getParcheggi, getParcheggio, getStatParcheggio, addRecensione, getRecensioniParcheggio, updateRecensione, addParcheggio, upload, deleteRecensione} = require('../controllers/parcheggio.controller');
 
 //GET
 router.get('/', getParcheggi);
@@ -11,7 +11,7 @@ router.get('/:id/stats', getStatParcheggio);
 
 //POST
 router.post('/:idP/recensioni/utente/:idU', addRecensione);
-router.post('/add/nuovopark', addParcheggio);
+router.post('/add/nuovopark', upload.single('image'), addParcheggio);
 
 //PUT
 router.put('/recensioni/:idR', updateRecensione);

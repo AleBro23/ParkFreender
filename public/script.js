@@ -1,23 +1,32 @@
 const header = document.querySelector("header");
 window.addEventListener("scroll", function() {
-    header.classList.toggle("sticky", window.scrollY > 60);
+    if (header) {
+        header.classList.toggle("sticky", window.scrollY > 60);
+    }
 });
 
 // Menu toggle
 let menu = document.querySelector('#menu-icon');
 let navbar = document.querySelector('.navbar');
-menu.onclick = () => {
-    menu.classList.toggle('bx-x');
-    navbar.classList.toggle('open');
-};
+if (menu) {
+    menu.onclick = () => {
+        menu.classList.toggle('bx-x');
+        navbar.classList.toggle('open');
+    };
+}
 
-//carica i dati dei parcheggi e li mostra 
+// Carica i dati dei parcheggi e li mostra
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/parcheggi'); //chiamata API
+        const response = await fetch('/parcheggi');
         const parcheggi = await response.json();
 
         const parcheggiContainer = document.getElementById('parcheggi-container');
+        if (!parcheggiContainer) {
+            console.error('Elemento con id "parcheggi-container" non trovato.');
+            return;
+        }
+        
         parcheggiContainer.innerHTML = '';
 
         parcheggi.forEach(parcheggio => {
@@ -31,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const cardImg = document.createElement('div');
             cardImg.className = 'card__img';
             const img = document.createElement('img');
-            img.src = parcheggio.image; // Assumendo che l'API restituisca l'URL dell'immagine
+            img.src = parcheggio.image;
             img.alt = parcheggio.nome;
             cardImg.appendChild(img);
             card.appendChild(cardImg);
@@ -62,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             cardButton.className = 'card-int__button';
             cardButton.textContent = 'Show';
             cardButton.onclick = () => {
-                // Event handler per il pulsante Show
                 window.location.href = `parkDetail.html?id=${parcheggio._id}`;
             };
             cardInt.appendChild(cardButton);
@@ -76,23 +84,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Form recensione
-document.querySelector('.review-form').addEventListener('submit', function(event) {
-    const ratingInputs = document.querySelectorAll('.rating input[type="radio"]');
-    let ratingSelected = false;
-    ratingInputs.forEach(function(input) {
-        if (input.checked) {
-            ratingSelected = true;
+const reviewForm = document.querySelector('.review-form');
+if (reviewForm) {
+    reviewForm.addEventListener('submit', function(event) {
+        const ratingInputs = document.querySelectorAll('.rating input[type="radio"]');
+        let ratingSelected = false;
+        ratingInputs.forEach(function(input) {
+            if (input.checked) {
+                ratingSelected = true;
+            }
+        });
+
+        if (!ratingSelected) {
+            event.preventDefault();
+            alert('Please select a rating.');
+        }
+
+        const reviewContent = document.getElementById('reviewContent').value;
+        if (reviewContent.length > 400) {
+            event.preventDefault();
+            alert('Review Content must be maximum 400 characters.');
         }
     });
-
-    if (!ratingSelected) {
-        event.preventDefault();
-        alert('Please select a rating.');
-    }
-
-    const reviewContent = document.getElementById('reviewContent').value;
-    if (reviewContent.length > 400) {
-        event.preventDefault();
-        alert('Review Content must be maximum 400 characters.');
-    }
-});
+} else {
+    console.error('Elemento con classe "review-form" non trovato.');
+}

@@ -1,6 +1,8 @@
 const Parcheggio = require('../models/parcheggio.models');
 const Recensione = require('../models/recensione.models');
 const Utente = require('../models/utente.models');
+const path = require('path');
+const multer = require('multer');
 
 //GET
 //restituisce i parcheggi e tutte le loro informazioni
@@ -103,28 +105,40 @@ const addRecensione = async (req, res) =>{
     }
 };
 
+
+
+// Configura multer per il caricamento delle immagini
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/Image/ParkFree/Foto Parcheggi ParkFree'); // directory di destinazione delle immagini
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname); // nome del file
+    }
+});
+const upload = multer({ storage: storage });
+
 //aggiunge un parcheggio
-const addParcheggio = async (req, res) =>{
-    try{
-        const { nome, capacita, disponibilita, posizione, tipologia, sosta, capacitaCamper, image } = req.body;
-        //creo un nuovo parcheggio
+const addParcheggio = async (req, res) => {
+    try {
+        const { nome, capacita, disponibilita, posizione, tipologia, sosta, capacitaCamper, image} = req.body;
+
         const nuovoParcheggio = new Parcheggio({
             nome,
             capacita,
             disponibilita,
             posizione,
-            tipologia,//
+            tipologia,
             sosta,
             capacitaCamper,
-            image
+            image,
         });
-        //salvo nel DB
+
         await nuovoParcheggio.save();
 
         res.status(201).json({ message: 'Parcheggio aggiunto con successo', parcheggio: nuovoParcheggio });
-    }
-    catch(error){
-        res.status(500).json({ message: error.message});
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -190,5 +204,5 @@ const deleteRecensione = async (req, res) =>{
 
 //export
 module.exports = {
-    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio, addRecensione, addParcheggio, updateRecensione, deleteRecensione, 
+    getParcheggi, getParcheggio, getRecensioniParcheggio, getStatParcheggio, addRecensione, addParcheggio, upload, updateRecensione, deleteRecensione, 
 }
