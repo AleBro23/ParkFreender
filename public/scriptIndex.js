@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const img = document.createElement('img');
             // Costruisce l'URL dell'immagine
-            img.src = `/public/${parcheggio.image}`;
+            img.src = parcheggio.image;
             img.alt = parcheggio.nome;
             box.appendChild(img);
 

@@ -14,6 +14,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
+<script> 
+    // All'inizio di ogni pagina HTML, controlla se l'utente è loggato 
+    window.onload = function() { 
+        let info = JSON.parse(localStorage.getItem('authInfo')); 
+        if (info && info['access_token']) { 
+            // L'utente è loggato, quindi cambia il pulsante di login in logout 
+            document.querySelector('.loginButton').innerHTML = 'Log-out'; 
+            document.querySelector('.loginButton').setAttribute('onclick', 'logout()'); 
+        } else { 
+            // L'utente non è loggato, quindi mostra il pulsante di login 
+            document.querySelector('.loginButton').innerHTML = 'Sign In With Google'; 
+            document.querySelector('.loginButton').setAttribute('onclick', 'signIn()'); 
+        } 
+    } 
+     
+    function logout(){ 
+        let info = JSON.parse(localStorage.getItem('authInfo')); 
+        fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'],{ 
+            method:'POST', 
+            headers:{ 
+                'Content-type':'application/x-www-form-urlencoded' 
+            } 
+        }) 
+        .then((data) => { 
+            // Rimuovi le informazioni dell'utente dal localStorage 
+            localStorage.removeItem('authInfo'); 
+            // Reindirizza l'utente alla pagina di login 
+            location.href = "http://localhost:3000/index_ParkFreender.html" 
+        }) 
+    } 
+    </script>
 
 <body>
     <!---header design-->
@@ -28,7 +59,7 @@
         </ul>
 
         <div class="h-right">
-            <button class="loginButton">
+            <button class="loginButton" onclick="signIn()">
                 <span class="loginButton-content">Sign-up with Google</span>
             </button>
             <a href="#"><i class="ri-github-fill"></i></a>
