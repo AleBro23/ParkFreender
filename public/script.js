@@ -59,11 +59,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <strong>Descrizione:</strong> ${parcheggio.descrizione || 'N/A'}<br>
                 <strong>Capacità:</strong> ${parcheggio.capacita}<br>
                 <strong>Disponibilità:</strong> ${parcheggio.disponibilita}<br>
-                <strong>Posizione:</strong> ${parcheggio.posizione || 'N/A'}<br>
                 <strong>Tipologia:</strong> ${parcheggio.tipologia || 'N/A'}<br>
                 <strong>Sosta:</strong> ${parcheggio.sosta || 'N/A'}<br>
-                <strong>Capacità Camper:</strong> ${parcheggio.capacitaCamper || 'N/A'}<br>
-                <strong>Valutazione:</strong> ${parcheggio.valutazione || 'N/A'}/5
             `;
             cardInt.appendChild(cardDescription);
 
