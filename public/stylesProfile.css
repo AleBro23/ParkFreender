@@ -106,7 +106,7 @@ nav ul li a.active, nav ul li a:hover {
     font-size: 0.8em;
 }
 
-.new-reservation-btn {
+.buttonl-btn {
     margin-left: auto;
     padding: 10px 20px;
     background-color: #00796b;
@@ -117,7 +117,7 @@ nav ul li a.active, nav ul li a:hover {
     transition: background-color 0.3s;
 }
 
-.new-reservation-btn:hover {
+.buttonl-btn:hover {
     background-color: #004d40;
 }
 

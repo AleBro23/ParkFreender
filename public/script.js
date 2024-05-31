@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             cardButton.className = 'card-int__button';
             cardButton.textContent = 'Show';
             cardButton.onclick = () => {
-                window.location.href = `parkDetail.html?id=${parcheggio._id}`;
+                window.location.href = `specificPark_ParkFreender.html?id=${parcheggio._id}`;
             };
             cardInt.appendChild(cardButton);
 
