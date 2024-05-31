@@ -58,20 +58,19 @@
             <header class="header">
                 <input type="text" placeholder="Search">
                 <div class="user">
-                    <img src="../Image/Home/Profile_image_examples/pr1.png" alt="User">
+                    <img class="profile-pic" id="image"/>
                 </div>
             </header>
             <section class="profile">
                 <div class="profile-header">
-                    <img src="../Image/Home/Profile_image_examples/pr1.png" alt="Profile Picture" class="profile-pic">
-                    <h2>Giangiorgia Bellimbusto</h2>
+                    <img class="profile-pic" id="image"/>
+                    <h2 id="name"></h2>
                     <span class="user-status">Authenticated user</span>
                     <button class="buttonl" onclick="logout()">Log-out</button>
                 </div>
                 <div class="profile-details">
-                    <p>Email: <a href="mailto:runolfsdir.gillian@hotmail.com">runolfsdir.gillian@hotmail.com</a></p>
-                    <p>Gender: Female</p>
-                    <p>Alerts: Allows Marketing Notifications</p>
+                    <p id="email">Email: </p>
+                    <p>Alerts: Allows Parking Notifications</p>
                 </div>
                 <div class="stats">
                     <button class="stat" onclick="updateContent('favourite-parks')">
