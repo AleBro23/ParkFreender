@@ -36,7 +36,7 @@ async function fetchProfileInfo(token) {
 async function checkOrAddUser(profile) { //controlla se l'utente si è già loggato o no
     try {
         // Verifica se l'utente esiste
-        let response = await fetch(`/api/utente/${profile.sub}`, {
+        let response = await fetch(`/utente/${profile.sub}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -45,7 +45,7 @@ async function checkOrAddUser(profile) { //controlla se l'utente si è già logg
 
         if (response.status === 404) {
             // Se l'utente non esiste, aggiungilo
-            response = await fetch('/api/utente', {
+            response = await fetch('/utente/add/nuovoutente', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
