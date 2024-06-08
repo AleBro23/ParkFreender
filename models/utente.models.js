@@ -11,9 +11,10 @@ const UtenteSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        password: {
+        googleId: {
             type: String,
-            required: false,
+            unique: true,
+            required: true,
         },
         recensioni: [{
             type: mongoose.Schema.Types.ObjectId,

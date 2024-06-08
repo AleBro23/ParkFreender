@@ -3,21 +3,20 @@ const Veicolo = require('../models/veicolo.models');
 
 //GET
 //restituisce i dati di un utente
-const getUtente = async (req, res) =>{
-    try{
-        const {id} = req.params; //id utente
-        const utente = await Utente.findById(id);
-
-        if(!utente){
-            return res.status(404).json({ message: 'Utente non trovato'});
+const getUtente =  async (req, res) => {
+    try {
+        console.log(`Verifica utente con Google ID: ${req.params.googleId}`);
+        const utente = await Utente.findOne({ googleId: req.params.googleId }); //uso l'id dell'autenticazione google (univoco)
+        if (!utente) {
+            return res.status(404).send('Utente non trovato');
         }
-
         res.status(200).json(utente);
-    }
-    catch(error){
-        res.status(500).json({ message: error.message });
+    } catch (error) {
+        console.error('Errore del server:', error);
+        res.status(500).send('Errore del server');
     }
 };
+
 
 //restituisce i veicoli di un utente
 const getVeicoli = async (req, res) =>{
@@ -42,12 +41,12 @@ const getVeicoli = async (req, res) =>{
 //aggiunge un utente
 const addUtente = async (req, res) =>{
     try{
-        const { username, email, password, recensioni, veicoli} = req.body;
+        const { username, email, googleId, recensioni, veicoli} = req.body;
         //creo un nuovo utente
         const nuovoUtente = new Utente({
             username,
             email,
-            password,
+            googleId,
             recensioni,
             veicoli
         });
@@ -150,5 +149,5 @@ const deleteVeicolo = async (req, res) =>{
 
 //export
 module.exports = {
-    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo,
+    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo, 
 }

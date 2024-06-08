@@ -1,10 +1,10 @@
 const express = require('express');
 const Parcheggio = require('../models/utente.models');
 const router = express.Router();
-const {getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo,} = require('../controllers/utente.controller');
+const {getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo} = require('../controllers/utente.controller');
 
 //GET
-router.get('/:id', getUtente);
+router.get('/:googleId', getUtente);
 router.get('/veicoli/:id', getVeicoli);
 
 //POST

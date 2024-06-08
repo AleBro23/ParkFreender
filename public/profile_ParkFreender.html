@@ -6,40 +6,6 @@
     <title>Parking Reservations</title>
     <link rel="stylesheet" href="stylesProfile.css">
 </head>
-
-<script>
-    // All'inizio di ogni pagina HTML, controlla se l'utente è loggato
-    window.onload = function() {
-        let info = JSON.parse(localStorage.getItem('authInfo'));
-        if (info && info['access_token']) {
-            // L'utente è loggato, quindi cambia il pulsante di login in logout
-            document.querySelector('.buttonl').innerHTML = 'Log-out';
-            document.querySelector('.buttonl').setAttribute('onclick', 'logout()');
-        } else {
-            // L'utente non è loggato, quindi mostra il pulsante di login
-            document.querySelector('.buttonl').innerHTML = 'Sign In With Google';
-            document.querySelector('.buttonl').setAttribute('onclick', 'signIn()');
-        }
-    }
-    
-    function logout(){
-        let info = JSON.parse(localStorage.getItem('authInfo'));
-        fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'],{
-            method:'POST',
-            headers:{
-                'Content-type':'application/x-www-form-urlencoded'
-            }
-        })
-        .then((data) => {
-            // Rimuovi le informazioni dell'utente dal localStorage
-            localStorage.removeItem('authInfo');
-            // Reindirizza l'utente alla pagina di login
-            location.href = "http://localhost:8080/index_ParkFreender.html"
-        })
-    }
-    
-</script>
-
 <body>
     <div class="container">
         <aside class="sidebar">
@@ -58,12 +24,12 @@
             <header class="header">
                 <input type="text" placeholder="Search">
                 <div class="user">
-                    <img class="profile-pic" id="image"/>
+                    <img class="profile-pic" id="image" />
                 </div>
             </header>
             <section class="profile">
                 <div class="profile-header">
-                    <img class="profile-pic" id="image"/>
+                    <img class="profile-pic" id="image" />
                     <h2 id="name"></h2>
                     <span class="user-status">Authenticated user</span>
                     <button class="buttonl" onclick="logout()">Log-out</button>
@@ -124,61 +90,135 @@
             </section>
         </main>
     </div>
-    <script src="scriptProfile.js"></script>
-</body>
 
-<script>
+    <script>
+        async function fetchProfileInfo(token) {
+            try {
+                const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-    let params = {}
-    
-    let regex = /([^&=]+)=([^&]*)/g, m
-    
-    while(m = regex.exec(location.href)){
-        params[decodeURIComponent(m[1])] = decodeURIComponent(m[2])
-    }
-    
-    if(Object.keys(params).length > 0){
-        localStorage.setItem('authInfo',JSON.stringify(params))
-    }
-    
-    //hide access token
-    
-    window.history.pushState({},document.title, "/" + "profile_ParkFreender.html")
-    
-    let info = JSON.parse(localStorage.getItem('authInfo'))
-    console.log(JSON.parse(localStorage.getItem('authInfo')))
-    console.log(info['access_token'])
-    console.log(info['expires_in'])
-    
-    //profile picture e email address
-    fetch("https://www.googleapis.com/oauth2/v3/userinfo",{
-        headers:{
-            "Authorization":`Bearer ${info['access_token']}`
+                if (!response.ok) {
+                    throw new Error(`Errore nel recuperare il profilo: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Errore nel fetchProfileInfo:', error);
+                return null;
+            }
         }
-    })
-    .then((data) => data.json())
-    .then((info) => {
-        console.log(info)
-        document.getElementById('name').innerHTML += info.name
-        if(info.email) { // Verifica se la proprietà email esiste
-            document.getElementById('email').innerHTML += info.email
-        } else {
-            document.getElementById('email').innerHTML += 'Non disponibile'
+
+        async function checkOrAddUser(profile) {
+            try {
+                console.log('Verifica se l\'utente esiste nel database con Google ID:', profile.sub);
+
+                let response = await fetch(`/utente/${profile.sub}`, { //chiamata API per recuperare i dati se esistono
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.status === 404) {
+                    console.log('Utente non trovato, creando un nuovo utente');
+
+                    response = await fetch('/utente/add/nuovoutente', { //chiamata API per creare un nuovo utente
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: profile.name,
+                            email: profile.email,
+                            googleId: profile.sub,
+                            recensioni: [],
+                            veicoli: []
+                        })
+                    });
+
+                    if (response.status === 201) {
+                        console.log('Utente creato con successo');
+                    } else {
+                        throw new Error(`Errore durante la creazione dell'utente: ${response.status}`);
+                    }
+                } else if (response.status === 200) {
+                    console.log('Utente trovato nel database');
+                } else {
+                    throw new Error(`Errore durante la verifica dell'utente: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Errore in checkOrAddUser:', error);
+            }
         }
-        document.getElementById('image').setAttribute('src', info.picture) // Corretto qui
-    })
-    
-    
-    function logout(){
-        fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'],{
-            method:'POST',
-            headers:{
-                'Content-type':'application/x-www-form-urlencoded'
+
+        window.onload = async function () {
+            const urlParams = new URLSearchParams(window.location.hash.replace('#', '?'));
+            
+            const accessToken = JSON.parse(localStorage.getItem('authInfo')).access_token; //prendo il token d'accesso dal local storage 
+
+            if (accessToken) {
+                console.log('Access Token:', accessToken);
+                const profile = await fetchProfileInfo(accessToken);
+
+                if (profile) {
+                    await checkOrAddUser(profile);
+                    // aggiornare dati profilo
+                } else {
+                    console.error('Errore nel recuperare il profilo utente');
+                }
+            } else {
+                console.error('Token di accesso non trovato');
+            }
+        };
+    </script>
+
+    <script>
+        // Funzioni per gestire l'autenticazione e il logout
+        let params = {};
+        let regex = /([^&=]+)=([^&]*)/g, m;
+
+        while (m = regex.exec(location.href)) {
+            params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+
+        if (Object.keys(params).length > 0) {
+            localStorage.setItem('authInfo', JSON.stringify(params));
+        }
+
+        // Nasconde il token di accesso dalla URL
+        window.history.pushState({}, document.title, "/" + "profile_ParkFreender.html");
+
+        let info = JSON.parse(localStorage.getItem('authInfo'));
+        console.log(info);
+
+        fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+            headers: {
+                "Authorization": `Bearer ${info['access_token']}`
             }
         })
-        .then((data) => {
-            location.href = "http://localhost:3000/index_ParkFreender.html"
-        })
-    }
-</script>
+        .then((data) => data.json())
+        .then((profileInfo) => {
+            console.log(profileInfo);
+            document.getElementById('name').innerHTML += profileInfo.name;
+            document.getElementById('email').innerHTML += profileInfo.email ? profileInfo.email : 'Non disponibile';
+            document.getElementById('image').setAttribute('src', profileInfo.picture);
+        });
+
+        function logout() {
+            fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then((data) => {
+                localStorage.removeItem('authInfo');
+                location.href = "http://localhost:3000/index_ParkFreender.html";
+            });
+        }
+    </script>
+</body>
 </html>
