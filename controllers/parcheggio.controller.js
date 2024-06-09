@@ -78,7 +78,7 @@ const addRecensione = async (req, res) =>{
         const idParcheggio = req.params.idP;
         const idUtente = req.params.idU;
         const parcheggio = await Parcheggio.findById(idParcheggio);
-        const utente = await Utente.findById(idUtente);
+        const utente = await Utente.findOne({ googleId: idUtente });
 
         if(!parcheggio || !utente){
             return res.status(404).json({ message: 'Parcheggio o utente non trovato'})
@@ -121,15 +121,13 @@ const upload = multer({ storage: storage });
 //aggiunge un parcheggio
 const addParcheggio = async (req, res) => {
     try {
-        const { nome, capacita, disponibilita, posizione, tipologia, sosta, capacitaCamper, image} = req.body;
+        const { nome, capacita, disponibilita, descrizione, capacitaCamper, image} = req.body;
 
         const nuovoParcheggio = new Parcheggio({
             nome,
             capacita,
             disponibilita,
-            posizione,
-            tipologia,
-            sosta,
+            descrizione,
             capacitaCamper,
             image,
         });

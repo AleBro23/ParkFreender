@@ -18,11 +18,7 @@ const ParcheggioSchema = mongoose.Schema(
             required: true,
             default: 0,
         },
-        tipologia: {
-            type: String,
-            required: true,
-        },
-        sosta: {
+        descrizione: {
             type: String,
             required: true,
         },
