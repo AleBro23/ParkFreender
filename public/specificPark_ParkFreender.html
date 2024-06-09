@@ -54,6 +54,79 @@
 </script>
 
 
+<script>
+  async function addPreferito() {
+      let info = JSON.parse(localStorage.getItem('authInfo'));
+      if (!info || !info['access_token']) {
+          alert('Devi effettuare l\'accesso per aggiungere ai preferiti.');
+          return;
+      }
+
+      const googleId = info.sub;
+      const parcheggioId = getParcheggioIdFromURL();
+
+      console.log("googleId:", googleId); // Debug
+      console.log("parcheggioId:", parcheggioId); // Debug
+
+      try {
+          const response = await fetch(`/utente/${googleId}/preferiti/${parcheggioId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${info['access_token']}`
+              }
+          });
+
+          if (response.ok) {
+              alert('Parcheggio aggiunto ai preferiti');
+          } else {
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Errore durante l\'aggiunta ai preferiti');
+          }
+      } catch (error) {
+          console.error('Errore:', error);
+          alert(`Errore durante l'aggiunta ai preferiti: ${error.message}`);
+      }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+      const parcheggioId = getParcheggioIdFromURL();
+      if (!parcheggioId) {
+          console.error('ID parcheggio non trovato nella URL');
+          return;
+      }
+
+      try {
+          const response = await fetch(`/parcheggi/${parcheggioId}`);
+          const parcheggio = await response.json();
+
+          if (!parcheggio) {
+              console.error('Parcheggio non trovato');
+              return;
+          }
+
+          // Aggiorna il contenuto della pagina con i dati del parcheggio
+          document.querySelector('.about4page-parkingText4 h1').textContent = parcheggio.nome;
+          document.querySelector('.excerpt').innerHTML = `
+              <strong>Descrizione:</strong> ${parcheggio.descrizione || 'N/A'}<br>
+              <strong>Disponibilità:</strong> ${parcheggio.disponibilita}<br>
+              <strong>Distanza:</strong> ${parcheggio.distanza} km<br>
+              <strong>Valutazione:</strong> ${parcheggio.valutazione}/5
+          `;
+          // Aggiorna altri elementi della pagina come necessario
+      } catch (error) {
+          console.error('Errore nel recuperare il parcheggio:', error);
+      }
+
+      // Aggiungi l'evento click al pulsante per aggiungere ai preferiti
+      document.querySelector('.actionButton').addEventListener('click', addPreferito);
+  });
+</script>
+
+
+
+
+
 <body>
 
     <!---header design-->
@@ -87,16 +160,17 @@
               <p class="excerpt"></p>
               <div class="button-container-action">
                 <button class="actionButton">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                      <svg viewBox="0 0 32 32">
-                        <path
-                          fill="currentColor"
-                          transform="scale(1.75)"
-                          d="M8.752,15.625h0L1.383,8.162a4.824,4.824,0,0,1,0-6.762,4.679,4.679,0,0,1,6.674,0l.694.7.694-.7a4.678,4.678,0,0,1,6.675,0,4.825,4.825,0,0,1,0,6.762L8.752,15.624ZM4.72,1.25A3.442,3.442,0,0,0,2.277,2.275a3.562,3.562,0,0,0,0,5l6.475,6.556,6.475-6.556a3.563,3.563,0,0,0,0-5A3.443,3.443,0,0,0,12.786,1.25h-.01a3.415,3.415,0,0,0-2.443,1.038L8.752,3.9,7.164,2.275A3.442,3.442,0,0,0,4.72,1.25Z"
-                        ></path>
-                      </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <svg viewBox="0 0 32 32">
+                      <path
+                        fill="currentColor"
+                        transform="scale(1.75)"
+                        d="M8.752,15.625h0L1.383,8.162a4.824,4.824,0,0,1,0-6.762,4.679,4.679,0,0,1,6.674,0l.694.7.694-.7a4.678,4.678,0,0,1,6.675,0,4.825,4.825,0,0,1,0,6.762L8.752,15.624ZM4.72,1.25A3.442,3.442,0,0,0,2.277,2.275a3.562,3.562,0,0,0,0,5l6.475,6.556,6.475-6.556a3.563,3.563,0,0,0,0-5A3.443,3.443,0,0,0,12.786,1.25h-.01a3.415,3.415,0,0,0-2.443,1.038L8.752,3.9,7.164,2.275A3.442,3.442,0,0,0,4.72,1.25Z"
+                      ></path>
                     </svg>
+                  </svg>
                 </button>
+                
 
                 <button class="actionButton">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">

@@ -26,6 +26,10 @@ const UtenteSchema = mongoose.Schema(
             ref: 'Veicolo',
             required: false
         }],
+        preferiti: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Parcheggio',
+        }],
     },
     {
         timestamps: true,

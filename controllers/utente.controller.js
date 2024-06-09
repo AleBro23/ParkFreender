@@ -1,5 +1,6 @@
 const Utente = require('../models/utente.models');
 const Veicolo = require('../models/veicolo.models');
+const Parcheggio = require('../models/parcheggio.models');
 
 //GET
 //restituisce i dati di un utente
@@ -81,6 +82,32 @@ const addVeicolo = async (req, res) =>{
     }
 };
 
+//POST 
+//aggiungo parcheggio preferito
+const addPreferito = async (req, res) => {
+    try {
+        const { googleId, parcheggioId } = req.params;
+        const utente = await Utente.findOne({ googleId });
+
+        if (!utente) {
+            return res.status(404).json({ message: 'Utente non trovato' });
+        }
+
+        if (!utente.preferiti.includes(parcheggioId)) {
+            utente.preferiti.push(parcheggioId);
+            await utente.save();
+        }
+
+        res.status(200).json({ message: 'Parcheggio aggiunto ai preferiti' });
+    } catch (error) {
+        console.error('Errore durante l\'aggiunta ai preferiti:', error);
+        res.status(500).json({ message: 'Errore durante l\'aggiunta ai preferiti', error: error.message });
+    }
+};
+
+
+
+
 //PUT
 //aggiorna dati veicolo
 const updateVeicolo = async (req, res) =>{
@@ -143,5 +170,5 @@ const deleteVeicolo = async (req, res) =>{
 
 //export
 module.exports = {
-    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo,
+    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo, addPreferito,
 };
