@@ -19,6 +19,36 @@
     family=Open+Sans: wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
+<script>
+  // All'inizio di ogni pagina HTML, controlla se l'utente è loggato
+  document.addEventListener("DOMContentLoaded", function() {
+      let info = JSON.parse(localStorage.getItem('authInfo'));
+      const loginButton = document.querySelector('.loginButton .loginButton-content');
+      if (info && info['access_token']) {
+          // L'utente è loggato, quindi cambia il pulsante di login in logout
+          loginButton.innerHTML = 'Log-out';
+          loginButton.parentNode.setAttribute('onclick', 'logout()');
+      } else {
+          // L'utente non è loggato, quindi mostra il pulsante di login
+          loginButton.innerHTML = 'Sign-up with Google';
+          loginButton.parentNode.setAttribute('onclick', 'signIn()');
+      }
+  });
+
+  function logout() {
+      let info = JSON.parse(localStorage.getItem('authInfo'));
+      fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
+          method: 'POST',
+          headers: {
+              'Content-type': 'application/x-www-form-urlencoded'
+          }
+      }).then(() => {
+          localStorage.removeItem('authInfo');
+          location.href = "http://localhost:3000/index_ParkFreender.html";
+      });
+  }
+</script>
+
 <body>
 
     <!---header design-->

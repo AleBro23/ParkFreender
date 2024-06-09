@@ -3,16 +3,14 @@ const Veicolo = require('../models/veicolo.models');
 
 //GET
 //restituisce i dati di un utente
-const getUtente =  async (req, res) => {
+const getUtente = async (req, res) => {
     try {
-        console.log(`Verifica utente con Google ID: ${req.params.googleId}`);
-        const utente = await Utente.findOne({ googleId: req.params.googleId }); //uso l'id dell'autenticazione google (univoco)
+        const utente = await Utente.findOne({ googleId: req.params.googleId });
         if (!utente) {
             return res.status(404).send('Utente non trovato');
         }
         res.status(200).json(utente);
     } catch (error) {
-        console.error('Errore del server:', error);
         res.status(500).send('Errore del server');
     }
 };
@@ -39,10 +37,9 @@ const getVeicoli = async (req, res) =>{
 
 //POST (add)
 //aggiunge un utente
-const addUtente = async (req, res) =>{
-    try{
-        const { username, email, googleId, recensioni, veicoli} = req.body;
-        //creo un nuovo utente
+const addUtente = async (req, res) => {
+    try {
+        const { username, email, googleId, recensioni, veicoli } = req.body;
         const nuovoUtente = new Utente({
             username,
             email,
@@ -50,13 +47,10 @@ const addUtente = async (req, res) =>{
             recensioni,
             veicoli
         });
-        //salvo nel DB
         await nuovoUtente.save();
-        
-        res.status(201).json({ message: 'utente creato con successo'});
-    }
-    catch(error){
-        res.status(500).json({ message: error.message});
+        res.status(201).json({ message: 'utente creato con successo' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -149,5 +143,5 @@ const deleteVeicolo = async (req, res) =>{
 
 //export
 module.exports = {
-    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo, 
-}
+    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo,
+};

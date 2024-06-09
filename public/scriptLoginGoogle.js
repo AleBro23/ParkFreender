@@ -8,7 +8,7 @@ function signIn() {
         "client_id": "991545223863-9l6nujmo3l2eqkm9buek2frvvadu7ujd.apps.googleusercontent.com",
         "redirect_uri": "http://localhost:3000/profile_ParkFreender.html",
         "response_type": "token",
-        "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.readonly",
+        "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
         "include_granted_scopes": 'true',
         'state': 'pass-through-value'
     };
@@ -41,7 +41,9 @@ window.onload = async function () {
         const profile = await fetchProfileInfo(accessToken);
         console.log(profile);
 
-        // Reindirizza l'utente alla sua area personale
+        localStorage.setItem('authInfo', JSON.stringify({ access_token: accessToken }));
+        
         window.location.href = '/profile_ParkFreender.html';
     }
 };
+

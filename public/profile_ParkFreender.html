@@ -6,6 +6,37 @@
     <title>Parking Reservations</title>
     <link rel="stylesheet" href="stylesProfile.css">
 </head>
+
+<script>
+    // All'inizio di ogni pagina HTML, controlla se l'utente è loggato
+    document.addEventListener("DOMContentLoaded", function() {
+        let info = JSON.parse(localStorage.getItem('authInfo'));
+        const loginButton = document.querySelector('.loginButton .loginButton-content');
+        if (info && info['access_token']) {
+            // L'utente è loggato, quindi cambia il pulsante di login in logout
+            loginButton.innerHTML = 'Log-out';
+            loginButton.parentNode.setAttribute('onclick', 'logout()');
+        } else {
+            // L'utente non è loggato, quindi mostra il pulsante di login
+            loginButton.innerHTML = 'Sign-up with Google';
+            loginButton.parentNode.setAttribute('onclick', 'signIn()');
+        }
+    });
+
+    function logout() {
+        let info = JSON.parse(localStorage.getItem('authInfo'));
+        fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
+        }).then(() => {
+            localStorage.removeItem('authInfo');
+            location.href = "http://localhost:3000/index_ParkFreender.html";
+        });
+    }
+</script>
+
 <body>
     <div class="container">
         <aside class="sidebar">
@@ -99,33 +130,33 @@
                         'Authorization': `Bearer ${token}`
                     }
                 });
-
+    
                 if (!response.ok) {
                     throw new Error(`Errore nel recuperare il profilo: ${response.status}`);
                 }
-
+    
                 return await response.json();
             } catch (error) {
                 console.error('Errore nel fetchProfileInfo:', error);
                 return null;
             }
         }
-
+    
         async function checkOrAddUser(profile) {
             try {
                 console.log('Verifica se l\'utente esiste nel database con Google ID:', profile.sub);
-
-                let response = await fetch(`/utente/${profile.sub}`, { //chiamata API per recuperare i dati se esistono
+    
+                let response = await fetch(`/utente/${profile.sub}`, { 
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
-
+    
                 if (response.status === 404) {
                     console.log('Utente non trovato, creando un nuovo utente');
-
-                    response = await fetch('/utente/add/nuovoutente', { //chiamata API per creare un nuovo utente
+    
+                    response = await fetch('/utente/add/nuovoutente', { 
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -138,7 +169,7 @@
                             veicoli: []
                         })
                     });
-
+    
                     if (response.status === 201) {
                         console.log('Utente creato con successo');
                     } else {
@@ -153,19 +184,20 @@
                 console.error('Errore in checkOrAddUser:', error);
             }
         }
-
+    
         window.onload = async function () {
             const urlParams = new URLSearchParams(window.location.hash.replace('#', '?'));
-            
-            const accessToken = JSON.parse(localStorage.getItem('authInfo')).access_token; //prendo il token d'accesso dal local storage 
-
+            const accessToken = JSON.parse(localStorage.getItem('authInfo')).access_token;
+    
             if (accessToken) {
                 console.log('Access Token:', accessToken);
                 const profile = await fetchProfileInfo(accessToken);
-
+    
                 if (profile) {
                     await checkOrAddUser(profile);
-                    // aggiornare dati profilo
+                    document.getElementById('name').innerHTML += profile.name;
+                    document.getElementById('email').innerHTML += profile.email ? profile.email : 'Non disponibile';
+                    document.getElementById('image').setAttribute('src', profile.picture);
                 } else {
                     console.error('Errore nel recuperare il profilo utente');
                 }
