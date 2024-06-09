@@ -15,16 +15,20 @@
 </head>
 
 <script>
-    // All'inizio di ogni pagina HTML, controlla se l'utente è loggato
     document.addEventListener("DOMContentLoaded", function() {
         let info = JSON.parse(localStorage.getItem('authInfo'));
         const loginButton = document.querySelector('.loginButton .loginButton-content');
+        const navbar = document.querySelector('.navbar');
+
         if (info && info['access_token']) {
-            // L'utente è loggato, quindi cambia il pulsante di login in logout
             loginButton.innerHTML = 'Log-out';
             loginButton.parentNode.setAttribute('onclick', 'logout()');
+
+            // Aggiungi "PersonalArea" alla barra di navigazione se l'utente è loggato
+            const personalAreaItem = document.createElement('li');
+            personalAreaItem.innerHTML = '<a href="profile_ParkFreender.html">PersonalArea</a>';
+            navbar.appendChild(personalAreaItem);
         } else {
-            // L'utente non è loggato, quindi mostra il pulsante di login
             loginButton.innerHTML = 'Sign-up with Google';
             loginButton.parentNode.setAttribute('onclick', 'signIn()');
         }
@@ -44,6 +48,7 @@
     }
 </script>
 
+
 <body>
 
     <!---header design-->
@@ -54,9 +59,10 @@
             <li><a href="parkFree_ParkFreender.html">ParkFree</a></li>
             <li><a href="#">ParkPay</a></li>
             <li><a href="#">Contact us</a></li>
+            <!-- La sezione "PersonalArea" verrà aggiunta dinamicamente qui -->
         </ul>
         <div class="h-right">
-            <button class="loginButton">
+            <button class="loginButton" onclick="signIn()">
                 <span class="loginButton-content">Sign-up with Google</span>
             </button>
             <a href="#"><i class="ri-github-fill"></i></a>
