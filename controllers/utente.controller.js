@@ -86,15 +86,15 @@ const addVeicolo = async (req, res) =>{
 //aggiungo parcheggio preferito
 const addPreferito = async (req, res) => {
     try {
-        const { googleId, parcheggioId } = req.params;
-        const utente = await Utente.findOne({ googleId });
+        const idParcheggio = req.params.parcheggioId;
+        const utente = await Utente.findOne({ googleId : req.params.googleId });
 
         if (!utente) {
             return res.status(404).json({ message: 'Utente non trovato' });
         }
 
-        if (!utente.preferiti.includes(parcheggioId)) {
-            utente.preferiti.push(parcheggioId);
+        if (!utente.preferiti.includes(idParcheggio)) {
+            utente.preferiti.push(idParcheggio);
             await utente.save();
         }
 
