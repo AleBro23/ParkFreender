@@ -924,19 +924,18 @@ header.sticky{
 /* recensioni */
 
 .reviewCard {
-    width: 100%;
-    max-width: 800px;
-    height: 250px;
-    background: #353535;
-    border-radius: 20px;
-    display: flex;
-    justify-content: left;
-    backdrop-filter: blur(10px);
-    transition: 0.5s ease-in-out;
-    align-items: flex-start;
-    padding: 20px;
-    z-index: 1; /*fa stare le recensioni non visibili quando si apre il form*/
-  }
+  width: 300px; /* Imposta una larghezza fissa */
+  height: 200px; /* Imposta un'altezza fissa */
+  overflow: hidden; /* Nasconde il contenuto che esce dai limiti del box */
+  margin: 10px; /* Margine per separare i box */
+  background-color: #333; /* Colore di sfondo */
+  color: #fff; /* Colore del testo */
+  border-radius: 10px; /* Angoli arrotondati */
+  padding: 20px; /* Padding interno */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
   
   .reviewCard:hover {
     cursor: pointer;
@@ -975,21 +974,25 @@ header.sticky{
   }
   
   .reviewDescription {
-    font-size: 18px;
-    font-weight: lighter;
-    margin-top: 8px;
-    text-align: justify;
-  }
-  
-  
-  .reviewGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Crea 2 colonne */
-    grid-gap: 40px; /* Spazio tra le recensioni */
-    justify-content: center; /* Centra le recensioni nella pagina */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Mostra massimo 4 linee di testo */
+    -webkit-box-orient: vertical;
+}
 
-  }
+.reviewGrid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra i box delle recensioni */
+    gap: 20px; /* Spaziatura tra i box */
+}
 
+.reviewCard img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
 
   .Reviewscontainer {
     display: flex;

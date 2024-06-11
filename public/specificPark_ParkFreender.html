@@ -123,6 +123,135 @@
   });
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const parcheggioId = getParcheggioIdFromURL();
+    if (!parcheggioId) {
+        console.error('ID parcheggio non trovato nella URL');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/parcheggi/${parcheggioId}`);
+        const parcheggio = await response.json();
+
+        if (!parcheggio) {
+            console.error('Parcheggio non trovato');
+            return;
+        }
+
+        // Aggiorna il contenuto della pagina con i dati del parcheggio
+        document.querySelector('.about4page-parkingText4 h1').textContent = parcheggio.nome;
+        document.querySelector('.excerpt').innerHTML = `
+            <strong>Descrizione:</strong> ${parcheggio.descrizione || 'N/A'}<br>
+            <strong>Disponibilità:</strong> ${parcheggio.disponibilita}<br>
+            <strong>Distanza:</strong> ${parcheggio.distanza} km<br>
+            <strong>Valutazione:</strong> ${parcheggio.valutazione}/5
+        `;
+
+        // Recupera le recensioni del parcheggio
+        const recensioniResponse = await fetch(`/parcheggi/${parcheggioId}/recensioni`);
+        const recensioni = await recensioniResponse.json();
+
+        if (recensioni && recensioni.length > 0) {
+            const reviewContainer = document.querySelector('.reviewGrid');
+            reviewContainer.innerHTML = ''; // Rimuove recensioni predefinite
+
+            recensioni.forEach(recensione => {
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'reviewCard';
+
+                reviewCard.innerHTML = `
+                    <div class="reviewImage"></div>
+                    <div class="reviewTextBox">
+                        <div class="reviewTextContent">
+                            <p class="reviewTitle">${recensione.utente ? recensione.utente.username : 'Utente sconosciuto'} ${recensione.valutazione}/5</p>
+                        </div>
+                        <p class="reviewDescription">${recensione.descrizione}</p>
+                    </div>
+                `;
+
+                reviewContainer.appendChild(reviewCard);
+            });
+        } else {
+            console.error('Nessuna recensione trovata');
+        }
+
+    } catch (error) {
+        console.error('Errore nel recuperare il parcheggio o le recensioni:', error);
+    }
+});
+
+</script>
+
+
+<script>
+  async function submitReview(event) {
+      event.preventDefault();
+
+      let info = JSON.parse(localStorage.getItem('authInfo'));
+      if (!info || !info['access_token']) {
+          alert('Devi effettuare l\'accesso per lasciare una recensione.');
+          return;
+      }
+
+      const googleId = info.sub;
+      const parcheggioId = getParcheggioIdFromURL();
+      const title = document.getElementById('reviewTitle').value;
+      const content = document.getElementById('reviewContent').value;
+      const rating = document.querySelector('input[name="rating"]:checked').value;
+
+      const reviewData = {
+          descrizione: title + " " + content,
+          valutazione: rating
+      };
+
+      try {
+          const response = await fetch(`/utente/${googleId}/recensioni/${parcheggioId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${info['access_token']}`
+              },
+              body: JSON.stringify(reviewData)
+          });
+
+          if (response.ok) {
+              alert('Recensione aggiunta con successo');
+              location.reload(); // Ricarica la pagina per mostrare la nuova recensione
+          } else {
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Errore durante l\'aggiunta della recensione');
+          }
+      } catch (error) {
+          console.error('Errore:', error);
+          alert(`Errore durante l'aggiunta della recensione: ${error.message}`);
+      }
+  }
+
+  document.querySelector('.review-form').addEventListener('submit', submitReview);
+</script>
+
+<!-- mostrare e nascondere il form--> 
+<script>
+  function openForm() {
+      document.getElementById('formOverlay').classList.remove('hidden');
+  }
+
+  function closeForm() {
+      document.getElementById('formOverlay').classList.add('hidden');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('.review-form').addEventListener('submit', submitReview);
+      document.getElementById('formOverlay').addEventListener('click', function(event) {
+          if (event.target === this) {
+              closeForm();
+          }
+      });
+  });
+</script>
+
 
 
 

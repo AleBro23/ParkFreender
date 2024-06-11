@@ -20,10 +20,10 @@ const getParcheggi = async (req, res) => {
 const getParcheggio= async (req, res) =>{
     try{
         const {id} = req.params;
-        const parcheggio = await Parcheggio.findById(id);
+        const parcheggio = await Parcheggio.findById(id).populate('recensioni');
 
         if(!parcheggio){
-            return res.status(404).json({ message: 'Parcheggio non trovato'})
+            return res.status(404).json({ message: 'Parcheggio non trovato'});
         }
 
         res.status(200).json(parcheggio);
