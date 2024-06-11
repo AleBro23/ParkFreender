@@ -8,30 +8,38 @@
 </head>
 
 <script>
-    // All'inizio di ogni pagina HTML, controlla se l'utente è loggato
+    // Quando il documento è completamente caricato, esegui questa funzione
     document.addEventListener("DOMContentLoaded", function() {
+        // Recupera le informazioni di autenticazione dal localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
+        // Seleziona il pulsante di login nella pagina
         const loginButton = document.querySelector('.loginButton .loginButton-content');
         if (info && info['access_token']) {
-            // L'utente è loggato, quindi cambia il pulsante di login in logout
+            // Se l'utente è autenticato, cambia il testo del pulsante di login in 'Log-out'
             loginButton.innerHTML = 'Log-out';
+            // Imposta l'evento di click sul pulsante per chiamare la funzione logout
             loginButton.parentNode.setAttribute('onclick', 'logout()');
         } else {
-            // L'utente non è loggato, quindi mostra il pulsante di login
+            // Se l'utente non è autenticato, imposta il testo del pulsante di login su 'Sign-up with Google'
             loginButton.innerHTML = 'Sign-up with Google';
+            // Imposta l'evento di click sul pulsante per chiamare la funzione signIn
             loginButton.parentNode.setAttribute('onclick', 'signIn()');
         }
     });
 
     function logout() {
+        // Recupera le informazioni di autenticazione dal localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
+        // Effettua una richiesta POST per revocare il token di accesso tramite l'API di Google
         fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
             method: 'POST',
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }
         }).then(() => {
+            // Rimuove le informazioni di autenticazione dal localStorage
             localStorage.removeItem('authInfo');
+            // Reindirizza l'utente alla pagina principale
             location.href = "http://localhost:3000/index_ParkFreender.html";
         });
     }
@@ -123,6 +131,7 @@
     </div>
 
     <script>
+        // Funzione per recuperare le informazioni del profilo utente dal server Google
         async function fetchProfileInfo(token) {
             try {
                 const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -142,6 +151,7 @@
             }
         }
     
+        // Funzione per verificare se l'utente esiste nel database o per aggiungerlo
         async function checkOrAddUser(profile) {
             try {
                 console.log('Verifica se l\'utente esiste nel database con Google ID:', profile.sub);
@@ -185,16 +195,20 @@
             }
         }
     
+        // Esegue il codice quando la finestra è caricata
         window.onload = async function () {
-            const urlParams = new URLSearchParams(window.location.hash.replace('#', '?'));
+            // Estrae il token di accesso dal localStorage
             const accessToken = JSON.parse(localStorage.getItem('authInfo')).access_token;
     
             if (accessToken) {
                 console.log('Access Token:', accessToken);
+                // Recupera il profilo dell'utente utilizzando il token di accesso
                 const profile = await fetchProfileInfo(accessToken);
     
                 if (profile) {
+                    // Verifica o aggiunge l'utente nel database
                     await checkOrAddUser(profile);
+                    // Aggiorna l'interfaccia utente con le informazioni del profilo
                     document.getElementById('name').innerHTML += profile.name;
                     document.getElementById('email').innerHTML += profile.email ? profile.email : 'Non disponibile';
                     document.getElementById('image').setAttribute('src', profile.picture);
@@ -212,6 +226,7 @@
         let params = {};
         let regex = /([^&=]+)=([^&]*)/g, m;
 
+        // Estrae i parametri dalla URL
         while (m = regex.exec(location.href)) {
             params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
         }
@@ -223,9 +238,11 @@
         // Nasconde il token di accesso dalla URL
         window.history.pushState({}, document.title, "/" + "profile_ParkFreender.html");
 
+        // Recupera le informazioni di autenticazione dal localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
         console.log(info);
 
+        // Recupera le informazioni del profilo dell'utente dal server Google
         fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
             headers: {
                 "Authorization": `Bearer ${info['access_token']}`
@@ -234,12 +251,14 @@
         .then((data) => data.json())
         .then((profileInfo) => {
             console.log(profileInfo);
+            // Aggiorna l'interfaccia utente con le informazioni del profilo
             document.getElementById('name').innerHTML += profileInfo.name;
             document.getElementById('email').innerHTML += profileInfo.email ? profileInfo.email : 'Non disponibile';
             document.getElementById('image').setAttribute('src', profileInfo.picture);
         });
 
         function logout() {
+            // Effettua una richiesta POST per revocare il token di accesso tramite l'API di Google
             fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
                 method: 'POST',
                 headers: {
@@ -247,7 +266,9 @@
                 }
             })
             .then((data) => {
+                // Rimuove le informazioni di autenticazione dal localStorage
                 localStorage.removeItem('authInfo');
+                // Reindirizza l'utente alla pagina principale
                 location.href = "http://localhost:3000/index_ParkFreender.html";
             });
         }

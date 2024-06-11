@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 
-
-
 <head>
     <title>Park Freender</title>
-    <!--- custom css link-->
+    <!-- Link al file CSS personalizzato -->
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <!--- boxicon link -->
+    <!-- Link alle icone di Boxicon -->
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <!-- Link alle icone di Remixicon -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
-    <!--- google font link -->
+    <!-- Link ai font di Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,43 +17,54 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Recupera le informazioni di autenticazione memorizzate nel localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
+        // Seleziona il pulsante di login nella pagina
         const loginButton = document.querySelector('.loginButton .loginButton-content');
+        // Seleziona la barra di navigazione
         const navbar = document.querySelector('.navbar');
 
+        // Controlla se l'utente è autenticato
         if (info && info['access_token']) {
+            // Cambia il testo del pulsante di login in 'Log-out'
             loginButton.innerHTML = 'Log-out';
+            // Imposta l'evento di click sul pulsante per chiamare la funzione logout
             loginButton.parentNode.setAttribute('onclick', 'logout()');
 
-            // Aggiungi "PersonalArea" alla barra di navigazione se l'utente è loggato
+            // Crea un nuovo elemento della barra di navigazione per l'area personale
             const personalAreaItem = document.createElement('li');
             personalAreaItem.innerHTML = '<a href="profile_ParkFreender.html">PersonalArea</a>';
+            // Aggiunge l'elemento "PersonalArea" alla barra di navigazione
             navbar.appendChild(personalAreaItem);
         } else {
+            // Se l'utente non è autenticato, imposta il testo del pulsante di login su 'Sign-up with Google'
             loginButton.innerHTML = 'Sign-up with Google';
+            // Imposta l'evento di click sul pulsante per chiamare la funzione signIn
             loginButton.parentNode.setAttribute('onclick', 'signIn()');
         }
     });
 
+    // Funzione per gestire il logout
     function logout() {
+        // Recupera le informazioni di autenticazione memorizzate nel localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
+        // Effettua una richiesta POST per revocare il token di accesso tramite l'API di Google
         fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
             method: 'POST',
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }
         }).then(() => {
+            // Rimuove le informazioni di autenticazione dal localStorage
             localStorage.removeItem('authInfo');
+            // Reindirizza l'utente alla pagina principale
             location.href = "http://localhost:3000/index_ParkFreender.html";
         });
     }
 </script>
 
-
-
 <body>
-
-    <!---header design-->
+    <!-- Intestazione della pagina -->
     <header>
         <a href="#" class="logo">PARK<span>Freender</span></a>
         <ul class="navbar">
@@ -65,20 +75,21 @@
             <!-- La sezione "PersonalArea" verrà aggiunta dinamicamente qui -->
         </ul>
         <div class="h-right">
+            <!-- Pulsante di login -->
             <button class="loginButton" onclick="signIn()">
                 <span class="loginButton-content">Sign-up with Google</span>
             </button>
+            <!-- Icone social -->
             <a href="#"><i class="ri-github-fill"></i></a>
             <a href="#"><i class="ri-youtube-fill"></i></a>
             <a href="#"><i class="ri-instagram-fill"></i></a>
             <a href="#"><i class="ri-tiktok-fill"></i></a>
+            <!-- Icona del menu -->
             <div class="bx bx-menu" id="menu-icon"></div>
         </div>
     </header>
 
-
-
-    <!-- About Us Section -->
+    <!-- Sezione "About Us" -->
     <section class="about-us">
         <div class="about-container">
             <div class="about-text">
@@ -112,9 +123,7 @@
         </div>
     </section>
 
-
-
-    <!---newsletter section design-->
+    <!-- Sezione "Newsletter" -->
     <section class="newsletter">
         <div class="newsletter-content">
             <div class="newsletter-text">
@@ -128,8 +137,8 @@
             </form>
         </div>
     </section>
-
 </body>
+
 
 <style>
 /* Reset some defaults */
