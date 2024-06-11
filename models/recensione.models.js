@@ -3,8 +3,14 @@ const mongoose = require('mongoose');
 const RecensioneSchema = mongoose.Schema(
     {
         utente: {
-            type: String,
-            required: false,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Utente',
+            required: true,
+        },
+        parcheggio: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Parcheggio',
+            required: true,
         },
         descrizione: {
             type: String,

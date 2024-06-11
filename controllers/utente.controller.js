@@ -1,6 +1,7 @@
 const Utente = require('../models/utente.models');
 const Veicolo = require('../models/veicolo.models');
 const Parcheggio = require('../models/parcheggio.models');
+const Recensione = require('../models/recensione.models');
 
 //GET
 //restituisce i dati di un utente
@@ -35,6 +36,18 @@ const getVeicoli = async (req, res) =>{
     }
 }
 
+//restituisce le recnesioni di un utente
+const getRecensioniUtente = async (req, res) => {
+    try {
+        const utente = await Utente.findOne({ googleId: req.params.googleId }).populate('recensioni');
+        if (!utente) {
+            return res.status(404).json({ message: 'Utente non trovato' });
+        }
+        return res.status(200).json(utente.recensioni);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
 //POST (add)
 //aggiunge un utente
@@ -105,7 +118,46 @@ const addPreferito = async (req, res) => {
     }
 };
 
+//aggiunge una recensione all'utente e al parcheggio
+const addRecensione = async (req, res) => {
+    try {
+        const { googleId, parcheggioId } = req.params;
+        const { descrizione, valutazione } = req.body;
 
+        // Trova l'utente per googleId
+        const utente = await Utente.findOne({ googleId: googleId });
+        if (!utente) {
+            return res.status(404).json({ message: 'Utente non trovato' });
+        }
+
+        // Trova il parcheggio per parcheggioId
+        const parcheggio = await Parcheggio.findById(parcheggioId);
+        if (!parcheggio) {
+            return res.status(404).json({ message: 'Parcheggio non trovato' });
+        }
+
+        // Crea una nuova recensione
+        const nuovaRecensione = new Recensione({
+            utente: utente._id,
+            parcheggio: parcheggio._id,
+            descrizione: descrizione,
+            valutazione: valutazione
+        });
+
+        // Salva la recensione
+        await nuovaRecensione.save();
+
+        // Aggiungi la recensione all'utente e al parcheggio
+        utente.recensioni.push(nuovaRecensione._id);
+        parcheggio.recensioni.push(nuovaRecensione._id);
+        await utente.save();
+        await parcheggio.save();
+
+        return res.status(200).json({ message: 'Recensione aggiunta con successo' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
 
 //PUT
@@ -132,6 +184,28 @@ const updateVeicolo = async (req, res) =>{
     }
 };
 
+//aggiorna dati recensione
+const updateRecensione = async (req, res) => {
+    try {
+        const recensioneId = req.params.recensioneId;
+        const { descrizione, valutazione } = req.body;
+
+        const recensione = await Recensione.findById(recensioneId);
+        if (!recensione) {
+            return res.status(404).json({ message: 'Recensione non trovata' });
+        }
+
+        // Aggiorna i campi
+        recensione.descrizione = descrizione;
+        recensione.valutazione = valutazione;
+
+        await recensione.save();
+
+        return res.status(200).json({ message: 'Recensione aggiornata con successo', recensione });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
 
 //DELETE
@@ -163,12 +237,67 @@ const deleteVeicolo = async (req, res) =>{
     }
 };
 
+//rimuove un parcheggio dai preferiti
+const removePreferito = async (req, res) =>{
+    try{
+        const idParcheggio = req.params.parcheggioId;
+        const utente = await Utente.findOne({ googleId : req.params.googleId });
 
+        if(!utente){
+            res.status(404).json({ message: 'utente non trovato'});
+        }
 
+        if (utente.preferiti.includes(idParcheggio)) {
+            utente.preferiti.pull(idParcheggio); //toglie l'utente dall'array
+            await utente.save();
+        }
 
+        res.status(200).json({ message: 'Parcheggio rimosso dai preferiti' });
+    }
+    catch (error){
+        res.status(500).json({ message: error.message});
+    }
+};
+
+//rimuove una recensione da un utente e il parcheggio e la cancella dal DB
+const removeRecensione = async (req, res) => {
+    try {
+        const { googleId, recensioneId, parcheggioId } = req.params;
+
+        // Trova l'utente per googleId
+        const utente = await Utente.findOne({ googleId: googleId });
+        if (!utente) {
+            return res.status(404).json({ message: 'Utente non trovato' });
+        }
+
+        // Trova il parcheggio per parcheggioId
+        const parcheggio = await Parcheggio.findById(parcheggioId);
+        if (!parcheggio) {
+            return res.status(404).json({ message: 'Parcheggio non trovato' });
+        }
+
+        // Trova e rimuove la recensione dall'array recensioni dell'utente
+        utente.recensioni = utente.recensioni.filter(id => id.toString() !== recensioneId);
+        await utente.save();
+
+        // Trova e rimuove la recensione dall'array recensioni del parcheggio
+        parcheggio.recensioni = parcheggio.recensioni.filter(id => id.toString() !== recensioneId);
+        await parcheggio.save();
+
+        // Rimuovo la recensione dal database
+        const recensione = await Recensione.findByIdAndDelete(recensioneId);
+        if (!recensione) {
+            return res.status(404).json({ message: 'Recensione non trovata' });
+        }
+
+        return res.status(200).json({ message: 'Recensione rimossa con successo' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
 
 //export
 module.exports = {
-    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo, addPreferito,
+    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo, addPreferito, removePreferito, addRecensione, removeRecensione, getRecensioniUtente, updateRecensione, 
 };
