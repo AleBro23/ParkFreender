@@ -197,28 +197,24 @@
     
         // Esegue il codice quando la finestra è caricata
         window.onload = async function () {
-            // Estrae il token di accesso dal localStorage
-            const accessToken = JSON.parse(localStorage.getItem('authInfo')).access_token;
-    
-            if (accessToken) {
-                console.log('Access Token:', accessToken);
-                // Recupera il profilo dell'utente utilizzando il token di accesso
-                const profile = await fetchProfileInfo(accessToken);
-    
-                if (profile) {
-                    // Verifica o aggiunge l'utente nel database
-                    await checkOrAddUser(profile);
-                    // Aggiorna l'interfaccia utente con le informazioni del profilo
-                    document.getElementById('name').innerHTML += profile.name;
-                    document.getElementById('email').innerHTML += profile.email ? profile.email : 'Non disponibile';
-                    document.getElementById('image').setAttribute('src', profile.picture);
-                } else {
-                    console.error('Errore nel recuperare il profilo utente');
-                }
+        const accessToken = JSON.parse(localStorage.getItem('authInfo')).access_token;
+
+        if (accessToken) {
+            console.log('Access Token:', accessToken);
+            const profile = await fetchProfileInfo(accessToken);
+
+            if (profile) {
+                await checkOrAddUser(profile);
+                document.getElementById('name').innerHTML += profile.name;
+                document.getElementById('email').innerHTML += profile.email ? profile.email : 'Non disponibile';
+                document.getElementById('image').setAttribute('src', profile.picture);
             } else {
-                console.error('Token di accesso non trovato');
+                console.error('Errore nel recuperare il profilo utente');
             }
-        };
+        } else {
+            console.error('Token di accesso non trovato');
+        }
+    };
     </script>
 
     <script>

@@ -186,51 +186,61 @@
 
 
 <script>
-  async function submitReview(event) {
-      event.preventDefault();
+async function submitReview(event) {
+    event.preventDefault();
 
-      let info = JSON.parse(localStorage.getItem('authInfo'));
-      if (!info || !info['access_token']) {
-          alert('Devi effettuare l\'accesso per lasciare una recensione.');
-          return;
-      }
+    let info = JSON.parse(localStorage.getItem('authInfo'));
+    if (!info || !info['access_token']) {
+        alert('Devi effettuare l\'accesso per lasciare una recensione.');
+        return;
+    }
 
-      const googleId = info.sub;
-      const parcheggioId = getParcheggioIdFromURL();
-      const title = document.getElementById('reviewTitle').value;
-      const content = document.getElementById('reviewContent').value;
-      const rating = document.querySelector('input[name="rating"]:checked').value;
+    const googleId = info.sub;
+    const parcheggioId = getParcheggioIdFromURL();
+    const title = document.getElementById('reviewTitle').value;
+    const content = document.getElementById('reviewContent').value;
+    const rating = document.querySelector('input[name="rating"]:checked').value;
 
-      const reviewData = {
-          descrizione: title + " " + content,
-          valutazione: rating
-      };
+    const reviewData = {
+        descrizione: `${title} - ${content}`,
+        valutazione: rating,
+        username: info.name, // Aggiungi questi campi
+        email: info.email    // Aggiungi questi campi
+    };
 
-      try {
-          const response = await fetch(`/utente/${googleId}/recensioni/${parcheggioId}`, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${info['access_token']}`
-              },
-              body: JSON.stringify(reviewData)
-          });
+    try {
+        const response = await fetch(`/utente/${googleId}/recensioni/${parcheggioId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${info['access_token']}`
+            },
+            body: JSON.stringify(reviewData)
+        });
 
-          if (response.ok) {
-              alert('Recensione aggiunta con successo');
-              location.reload(); // Ricarica la pagina per mostrare la nuova recensione
-          } else {
-              const errorData = await response.json();
-              throw new Error(errorData.message || 'Errore durante l\'aggiunta della recensione');
-          }
-      } catch (error) {
-          console.error('Errore:', error);
-          alert(`Errore durante l'aggiunta della recensione: ${error.message}`);
-      }
-  }
+        if (response.ok) {
+            alert('Recensione aggiunta con successo');
+            location.reload(); // Ricarica la pagina per mostrare la nuova recensione
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Errore durante l\'aggiunta della recensione');
+        }
+    } catch (error) {
+        console.error('Errore:', error);
+        alert(`Errore durante l'aggiunta della recensione: ${error.message}`);
+    }
+}
 
-  document.querySelector('.review-form').addEventListener('submit', submitReview);
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.review-form').addEventListener('submit', submitReview);
+    document.getElementById('formOverlay').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeForm();
+        }
+    });
+});
 </script>
+
 
 <!-- mostrare e nascondere il form--> 
 <script>

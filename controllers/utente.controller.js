@@ -118,49 +118,6 @@ const addPreferito = async (req, res) => {
     }
 };
 
-//aggiunge una recensione all'utente e al parcheggio
-const addRecensione = async (req, res) => {
-    try {
-        const { googleId, parcheggioId } = req.params;
-        const { descrizione, valutazione } = req.body;
-
-        // Trova l'utente per googleId
-        const utente = await Utente.findOne({ googleId: googleId });
-        if (!utente) {
-            return res.status(404).json({ message: 'Utente non trovato' });
-        }
-
-        // Trova il parcheggio per parcheggioId
-        const parcheggio = await Parcheggio.findById(parcheggioId);
-        if (!parcheggio) {
-            return res.status(404).json({ message: 'Parcheggio non trovato' });
-        }
-
-        // Crea una nuova recensione
-        const nuovaRecensione = new Recensione({
-            utente: utente._id,
-            parcheggio: parcheggio._id,
-            descrizione: descrizione,
-            valutazione: valutazione
-        });
-
-        // Salva la recensione
-        await nuovaRecensione.save();
-
-        // Aggiungi la recensione all'utente e al parcheggio
-        utente.recensioni.push(nuovaRecensione._id);
-        parcheggio.recensioni.push(nuovaRecensione._id);
-        await utente.save();
-        await parcheggio.save();
-
-        return res.status(200).json({ message: 'Recensione aggiunta con successo' });
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-};
-
-
-
 //PUT
 //aggiorna dati veicolo
 const updateVeicolo = async (req, res) =>{
@@ -297,8 +254,71 @@ const removeRecensione = async (req, res) => {
     }
 };
 
+const checkOrAddUser = async (googleId, profile) => {
+    try {
+        let user = await Utente.findOne({ googleId: googleId });
+        if (!user) {
+            user = new Utente({
+                username: profile.name || 'default_username', // Aggiungi un valore di default se il nome non è presente
+                email: profile.email || 'default_email@example.com', // Aggiungi un valore di default se l'email non è presente
+                googleId: googleId,
+                recensioni: [],
+                veicoli: []
+            });
+            await user.save();
+        }
+        return user;
+    } catch (error) {
+        throw new Error('Errore nel controllare o aggiungere l\'utente: ' + error.message);
+    }
+};
+
+//POST
+//aggiunge una recensione all'utente e al parcheggio
+const addRecensione = async (req, res) => {
+    try {
+        const { googleId, parcheggioId } = req.params;
+        const { descrizione, valutazione } = req.body;
+
+        const profile = {
+            name: req.body.username, // Assicurati che questi campi siano presenti nel corpo della richiesta
+            email: req.body.email
+        };
+
+        // Controlla o aggiungi l'utente
+        const utente = await checkOrAddUser(googleId, profile);
+
+        // Trova il parcheggio per parcheggioId
+        const parcheggio = await Parcheggio.findById(parcheggioId);
+        if (!parcheggio) {
+            return res.status(404).json({ message: 'Parcheggio non trovato' });
+        }
+
+        // Crea una nuova recensione
+        const nuovaRecensione = new Recensione({
+            utente: utente._id,
+            parcheggio: parcheggio._id,
+            descrizione: descrizione,
+            valutazione: valutazione
+        });
+
+        // Salva la recensione
+        await nuovaRecensione.save();
+
+        // Aggiungi la recensione all'utente e al parcheggio
+        utente.recensioni.push(nuovaRecensione._id);
+        parcheggio.recensioni.push(nuovaRecensione._id);
+        await utente.save();
+        await parcheggio.save();
+
+        return res.status(200).json({ message: 'Recensione aggiunta con successo' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 
 //export
 module.exports = {
-    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo, addPreferito, removePreferito, addRecensione, removeRecensione, getRecensioniUtente, updateRecensione, 
+    getUtente, addUtente, getVeicoli, addVeicolo, updateVeicolo, deleteVeicolo, addPreferito, removePreferito, addRecensione, removeRecensione, getRecensioniUtente, updateRecensione, checkOrAddUser, 
 };

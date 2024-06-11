@@ -41,9 +41,13 @@ window.onload = async function () {
         const profile = await fetchProfileInfo(accessToken);
         console.log(profile);
 
-        localStorage.setItem('authInfo', JSON.stringify({ access_token: accessToken }));
-        
+        localStorage.setItem('authInfo', JSON.stringify({
+            access_token: accessToken,
+            sub: profile.sub,
+            email: profile.email,
+            name: profile.name // Assicurati che il nome sia presente
+        }));
+
         window.location.href = '/profile_ParkFreender.html';
     }
 };
-
