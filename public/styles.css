@@ -918,14 +918,10 @@ header.sticky{
 }
 
 
-
-
-
 /* recensioni */
-
 .reviewCard {
-  width: 300px; /* Imposta una larghezza fissa */
-  height: 200px; /* Imposta un'altezza fissa */
+  width: calc(49% - 20px); /* Imposta la larghezza al 49% meno i margini */
+  height: 250px; /* Imposta un'altezza fissa per uniformare i box */
   overflow: hidden; /* Nasconde il contenuto che esce dai limiti del box */
   margin: 10px; /* Margine per separare i box */
   background-color: #333; /* Colore di sfondo */
@@ -934,77 +930,82 @@ header.sticky{
   padding: 20px; /* Padding interno */
   display: flex;
   flex-direction: column;
+  align-items: flex-start; /* Allinea gli elementi all'inizio */
+}
+
+.reviewCard:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.reviewImage {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px; /* Spazio sotto l'immagine */
+  border-radius: 10px;
+  background: linear-gradient(#d7cfcf, #9198e5);
+}
+
+.reviewCard:hover > .reviewImage {
+  transition: 0.5s ease-in-out;
+  background: linear-gradient(#9198e5, #712020);
+}
+
+.reviewTextBox {
+  width: 100%; /* Assicura che il testo occupi tutta la larghezza disponibile */
+  color: white;
+  font-family: 'Poppins', sans-serif;
+}
+
+.reviewTextContent {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
 }
-  
-  .reviewCard:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-  }
-  
-  .reviewImage {
-    width: 50px;
-    height: 50px;
-    margin-left: 10px;
-    border-radius: 10px;
-    background: linear-gradient(#d7cfcf, #9198e5);
-  }
-  
-  .reviewCard:hover > .reviewImage {
-    transition: 0.5s ease-in-out;
-    background: linear-gradient(#9198e5, #712020);
-  }
-  
-  .reviewTextBox {
-    width: calc(100% - 90px);
-    margin-left: 10px;
-    color: white;
-    font-family: 'Poppins' sans-serif;
-  }
-  
-  .reviewTextContent {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .reviewTitle {
-    font-size: 22px;
-    font-weight: bold;
-  }
-  
-  .reviewDescription {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 4; /* Mostra massimo 4 linee di testo */
-    -webkit-box-orient: vertical;
+
+.reviewTitle {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px; /* Spazio sotto il titolo */
+}
+
+.reviewDescription {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* Mostra massimo 4 linee di testo */
+  -webkit-box-orient: vertical;
 }
 
 .reviewGrid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center; /* Centra i box delle recensioni */
-    gap: 20px; /* Spaziatura tra i box */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Distribuisce lo spazio tra i box delle recensioni */
+  gap: 20px; /* Spaziatura tra i box */
 }
 
 .reviewCard img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
-  .Reviewscontainer {
-    display: flex;
-    justify-content: center;
-  }
-
-  .review-text h2{
-    font-size: var(--h2-font);
-    font-weight: 800;
-    padding-left: 18rem;
-    margin-bottom: -2rem;
+.Reviewscontainer {
+  display: flex;
+  justify-content: center;
 }
+
+.review-text h2 {
+  font-size: var(--h2-font);
+  font-weight: 800;
+  padding-left: 18rem; /* Mantenere lo stesso padding per il titolo */
+  margin-bottom: -2rem;
+}
+
+
+
+
+
 
 
 /* action button */
