@@ -27,6 +27,9 @@ app.get('/', (req, res) => { //richiesta all url '/'
 });
 
 
+//PORTA DI ASCOLTO
+const port = process.env.PORT || 3000; //per render
+
 mongoose.
 connect(
     'mongodb+srv://alebrogna02:mfke3Lcwgb7EPAzF@backendparkfreender.hxqjtbp.mongodb.net/?retryWrites=true&w=majority&appName=BackEndParkFreender'
@@ -34,7 +37,7 @@ connect(
 .then(() => {
     console.log("Connesso al database");
     //ora connetto al server
-    app.listen(3000, () =>{ //in ascolto sulla porta 3000
+    app.listen(port, () =>{ //in ascolto sulla porta 3000
         console.log('Server is running on port 3000');
     });
 })
