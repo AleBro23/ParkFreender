@@ -3,25 +3,33 @@
 
 <head>
     <title>Park Freender</title>
-    <!--- custom css link-->
+    <!-- Collegamento al file CSS personalizzato -->
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <!--- boxicon link -->
+    <!-- Collegamento al CSS delle icone di Boxicons -->
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <!-- Collegamento al CSS delle icone di Remixicon -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-    <!--- google font link -->
+    <!-- Collegamenti ai font di Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <script>
+    // Esegue il codice quando il documento è completamente caricato
     document.addEventListener("DOMContentLoaded", function() {
+        // Recupera le informazioni di autenticazione dal localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
+        // Seleziona il pulsante di login nella pagina
         const loginButton = document.querySelector('.loginButton .loginButton-content');
+        // Seleziona la barra di navigazione
         const navbar = document.querySelector('.navbar');
 
+        // Controlla se l'utente è autenticato
         if (info && info['access_token']) {
+            // Cambia il testo del pulsante di login in 'Log-out'
             loginButton.innerHTML = 'Log-out';
+            // Imposta l'evento di click sul pulsante per chiamare la funzione logout
             loginButton.parentNode.setAttribute('onclick', 'logout()');
 
             // Aggiungi "PersonalArea" alla barra di navigazione se l'utente è loggato
@@ -29,28 +37,34 @@
             personalAreaItem.innerHTML = '<a href="profile_ParkFreender.html">PersonalArea</a>';
             navbar.appendChild(personalAreaItem);
         } else {
+            // Se l'utente non è autenticato, imposta il testo del pulsante di login su 'Sign-up with Google'
             loginButton.innerHTML = 'Sign-up with Google';
+            // Imposta l'evento di click sul pulsante per chiamare la funzione signIn
             loginButton.parentNode.setAttribute('onclick', 'signIn()');
         }
     });
 
+    // Funzione per gestire il logout
     function logout() {
+        // Recupera le informazioni di autenticazione dal localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
+        // Effettua una richiesta POST per revocare il token di accesso tramite l'API di Google
         fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
             method: 'POST',
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }
         }).then(() => {
+            // Rimuove le informazioni di autenticazione dal localStorage
             localStorage.removeItem('authInfo');
+            // Reindirizza l'utente alla pagina principale
             location.href = "http://localhost:3000/index_ParkFreender.html";
         });
     }
 </script>
 
-
 <body>
-    <!---header design-->
+    <!-- Intestazione della pagina -->
     <header>
         <a href="#" class="logo">PARK<span>Freender</span></a>
         <ul class="navbar">
@@ -61,18 +75,21 @@
             <!-- La sezione "PersonalArea" verrà aggiunta dinamicamente qui -->
         </ul>
         <div class="h-right">
+            <!-- Pulsante di login -->
             <button class="loginButton" onclick="signIn()">
                 <span class="loginButton-content">Sign-up with Google</span>
             </button>
+            <!-- Icone social -->
             <a href="#"><i class="ri-github-fill"></i></a>
             <a href="#"><i class="ri-youtube-fill"></i></a>
             <a href="#"><i class="ri-instagram-fill"></i></a>
             <a href="#"><i class="ri-tiktok-fill"></i></a>
+            <!-- Icona del menu -->
             <div class="bx bx-menu" id="menu-icon"></div>
         </div>
     </header>
 
-    <!--- home section design -->
+    <!-- Sezione principale -->
     <section class="home">
         <div class="home-text">
             <h5>Let's</h5>
@@ -85,7 +102,7 @@
         </div>
     </section>
 
-    <!--- Dov'è l'utente -->
+    <!-- Sezione "Dov'è l'utente" -->
     <section class="userMap">
         <div class="userMap-img">
             <img src="Image/Home/Mappa_example.png">
@@ -102,7 +119,7 @@
         </div>
     </section>
 
-    <!--Popular parking design -->
+    <!-- Sezione "Parcheggi popolari" -->
     <section class="popular">
         <div class="center-text">
             <h2>Popular Parking</h2>
@@ -122,10 +139,9 @@
                 </button>
             </a>
         </div>
-
     </section>
 
-    <!--- Best users section design-->
+    <!-- Sezione "Migliori utenti" -->
     <section class="bestUsers">
         <div class="center-text">
             <h2 class="best-users-title">Most active users</h2>
@@ -161,7 +177,7 @@
         </div>
     </section>
 
-    <!---culture section design-->
+    <!-- Sezione "Cultura" -->
     <section class="Culture">
         <div class="Culture-text">
             <h5>PARK FREENDER</h5>
@@ -178,7 +194,7 @@
         </div>
     </section>
 
-    <!---newsletter section design-->
+    <!-- Sezione "Newsletter" -->
     <section class="newsletter">
         <div class="newsletter-content">
             <div class="newsletter-text">
@@ -193,7 +209,7 @@
         </div>
     </section>
 
-    <!--- custom js file link -->
+    <!-- Collegamento ai file JS personalizzati -->
     <script src="scriptIndex.js"></script>
     <script src="scriptLoginGoogle.js"></script>
 </body>
