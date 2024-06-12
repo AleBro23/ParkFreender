@@ -919,6 +919,7 @@ header.sticky{
 
 
 /* recensioni */
+/* recensioni */
 .reviewCard {
   width: calc(49% - 20px); /* Imposta la larghezza al 49% meno i margini */
   height: 250px; /* Imposta un'altezza fissa per uniformare i box */
@@ -931,6 +932,7 @@ header.sticky{
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Allinea gli elementi all'inizio */
+  box-sizing: border-box; /* Assicurati che il padding sia incluso nella larghezza e altezza */
 }
 
 .reviewCard:hover {
@@ -982,6 +984,7 @@ header.sticky{
   flex-wrap: wrap;
   justify-content: space-between; /* Distribuisce lo spazio tra i box delle recensioni */
   gap: 20px; /* Spaziatura tra i box */
+  width: 100%; /* Assicura che il contenitore utilizzi tutta la larghezza disponibile */
 }
 
 .reviewCard img {
@@ -993,14 +996,20 @@ header.sticky{
 .Reviewscontainer {
   display: flex;
   justify-content: center;
+  width: 100%; /* Assicura che il contenitore utilizzi tutta la larghezza disponibile */
+}
+
+.review-text {
+  text-align: left; /* Allinea il testo a sinistra */
+  padding-left: 18rem; /* Mantieni lo stesso padding per il titolo */
 }
 
 .review-text h2 {
   font-size: var(--h2-font);
   font-weight: 800;
-  padding-left: 18rem; /* Mantenere lo stesso padding per il titolo */
   margin-bottom: -2rem;
 }
+
 
 
 
