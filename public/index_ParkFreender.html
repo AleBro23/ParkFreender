@@ -46,19 +46,15 @@
 
     // Funzione per gestire il logout
     function logout() {
-        // Recupera le informazioni di autenticazione dal localStorage
         let info = JSON.parse(localStorage.getItem('authInfo'));
-        // Effettua una richiesta POST per revocare il token di accesso tramite l'API di Google
         fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
             method: 'POST',
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }
         }).then(() => {
-            // Rimuove le informazioni di autenticazione dal localStorage
             localStorage.removeItem('authInfo');
-            // Reindirizza l'utente alla pagina principale
-            location.href = "https://parkfreender.onrender.com/index_ParkFreender.html";
+            location.href = "https://parkfreender.onrender.com/index_ParkFreender.html";  // Modificato qui
         });
     }
 </script>

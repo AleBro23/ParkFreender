@@ -40,17 +40,17 @@
   });
 
   function logout() {
-      let info = JSON.parse(localStorage.getItem('authInfo'));
-      fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
-          method: 'POST',
-          headers: {
-              'Content-type': 'application/x-www-form-urlencoded'
-          }
-      }).then(() => {
-          localStorage.removeItem('authInfo');
-          location.href = "http://localhost:3000/index_ParkFreender.html";
-      });
-  }
+        let info = JSON.parse(localStorage.getItem('authInfo'));
+        fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'], {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
+        }).then(() => {
+            localStorage.removeItem('authInfo');
+            location.href = "https://parkfreender.onrender.com/index_ParkFreender.html";  // Modificato qui
+        });
+    }
 </script>
 
 

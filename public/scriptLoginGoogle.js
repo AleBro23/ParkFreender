@@ -1,3 +1,4 @@
+// scriptLoginGoogle.js
 function signIn() {
     let oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
     let form = document.createElement('form');
@@ -6,7 +7,7 @@ function signIn() {
 
     let params = {
         "client_id": "991545223863-9l6nujmo3l2eqkm9buek2frvvadu7ujd.apps.googleusercontent.com",
-        "redirect_uri": "http://localhost:3000/profile_ParkFreender.html",
+        "redirect_uri": "https://parkfreender.onrender.com/profile_ParkFreender.html",  // Modificato qui
         "response_type": "token",
         "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
         "include_granted_scopes": 'true',
