@@ -1,4 +1,3 @@
-// scriptLoginGoogle.js
 function signIn() {
     let oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
     let form = document.createElement('form');
@@ -49,6 +48,7 @@ window.onload = async function () {
             name: profile.name // Assicurati che il nome sia presente
         }));
 
-        window.location.href = '/profile_ParkFreender.html';
+        window.location.href = '/profile_ParkFreender.html';  // Modificato qui
     }
 };
+

@@ -132,24 +132,35 @@
 
     <script>
         // Funzione per recuperare le informazioni del profilo utente dal server Google
-        async function fetchProfileInfo(token) {
+        async function fetchUserData(googleId) {
             try {
-                const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-    
+                const response = await fetch(`/utente/${googleId}`);
                 if (!response.ok) {
-                    throw new Error(`Errore nel recuperare il profilo: ${response.status}`);
+                    throw new Error('Errore nel recuperare i dati dell\'utente');
                 }
-    
                 return await response.json();
             } catch (error) {
-                console.error('Errore nel fetchProfileInfo:', error);
+                console.error('Errore nel fetchUserData:', error);
                 return null;
             }
         }
+
+    async function fetchUserProfile() {
+        const info = JSON.parse(localStorage.getItem('authInfo'));
+        if (info && info['sub']) {
+            const googleId = info['sub'];
+            const userData = await fetchUserData(googleId);
+
+            if (userData) {
+                updateContent('favourite-parks', userData.preferiti);
+                updateContent('my-feedbacks', userData.recensioni);
+            }
+        } else {
+            console.error('Utente non autenticato');
+        }
+    }
+
+document.addEventListener('DOMContentLoaded', fetchUserProfile);
     
         // Funzione per verificare se l'utente esiste nel database o per aggiungerlo
         async function checkOrAddUser(profile) {

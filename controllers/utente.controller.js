@@ -196,24 +196,23 @@ const deleteVeicolo = async (req, res) =>{
 };
 
 //rimuove un parcheggio dai preferiti
-const removePreferito = async (req, res) =>{
-    try{
+const removePreferito = async (req, res) => {
+    try {
         const idParcheggio = req.params.parcheggioId;
-        const utente = await Utente.findOne({ googleId : req.params.googleId });
+        const utente = await Utente.findOne({ googleId: req.params.googleId });
 
-        if(!utente){
-            res.status(404).json({ message: 'utente non trovato'});
+        if (!utente) {
+            return res.status(404).json({ message: 'Utente non trovato' });
         }
 
         if (utente.preferiti.includes(idParcheggio)) {
-            utente.preferiti.pull(idParcheggio); //toglie l'utente dall'array
+            utente.preferiti.pull(idParcheggio);
             await utente.save();
         }
 
         res.status(200).json({ message: 'Parcheggio rimosso dai preferiti' });
-    }
-    catch (error){
-        res.status(500).json({ message: error.message});
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
