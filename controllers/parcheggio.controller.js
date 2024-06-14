@@ -41,22 +41,28 @@ const getRecensioniParcheggio = async (req, res) => {
                 path: 'recensioni',
                 populate: {
                     path: 'utente',
-                    select: 'username' // Popola solo il campo 'username' dell'utente per il display della recensione
+                    select: 'username googleId', // Popola i campi 'username' e 'googleId' dell'utente
+                    model: 'Utente'
                 }
             });
-        
+
         if (!parcheggio) {
             return res.status(404).json({ message: 'Parcheggio non trovato' });
         }
 
-        const recensioniValide = parcheggio.recensioni.filter(recensione => recensione.utente);
+        const recensioni = await Promise.all(
+            parcheggio.recensioni.map(async (recensione) => {
+                const utente = await Utente.findOne({ googleId: recensione.utente }).select('username googleId');
+                return { ...recensione._doc, utente: utente || { username: 'default_username' } };
+            })
+        );
 
-        
-        return res.status(200).json(recensioniValide);
+        return res.status(200).json(recensioni);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 };
+
 
 
 //restituisce le statistiche di un parcheggio 

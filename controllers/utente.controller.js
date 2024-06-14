@@ -95,7 +95,49 @@ const addVeicolo = async (req, res) =>{
     }
 };
 
-//POST 
+
+const addRecensione = async (req, res) => {
+    try {
+        const { googleId, parcheggioId } = req.params;
+        const { descrizione, valutazione, username, email } = req.body;
+
+
+        //lo cerco con il googleId
+        const utente = await Utente.findOne({ googleId });
+        if (!utente) {
+            return res.status(404).json({ message: 'Utente non trovato' });
+        }
+
+        // Trova il parcheggio per parcheggioId
+        const parcheggio = await Parcheggio.findById(parcheggioId);
+        if (!parcheggio) {
+            return res.status(404).json({ message: 'Parcheggio non trovato' });
+        }
+
+        // Crea una nuova recensione
+        const nuovaRecensione = new Recensione({
+            utente: googleId, // Salva il googleId dell'utente
+            parcheggio: parcheggio._id,
+            descrizione,
+            valutazione
+        });
+
+        // Salva la recensione
+        await nuovaRecensione.save();
+
+        // Aggiunge la recensione all'utente e al parcheggio
+        utente.recensioni.push(nuovaRecensione._id);
+        parcheggio.recensioni.push(nuovaRecensione._id);
+        await utente.save();
+        await parcheggio.save();
+
+        return res.status(200).json({ message: 'Recensione aggiunta con successo' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
 //aggiungo parcheggio preferito
 const addPreferito = async (req, res) => {
     try {
@@ -272,49 +314,7 @@ const checkOrAddUser = async (googleId, profile) => {
     }
 };
 
-//POST
-//aggiunge una recensione all'utente e al parcheggio
-const addRecensione = async (req, res) => {
-    try {
-        const { googleId, parcheggioId } = req.params;
-        const { descrizione, valutazione } = req.body;
 
-        const profile = {
-            name: req.body.username, // Assicurati che questi campi siano presenti nel corpo della richiesta
-            email: req.body.email
-        };
-
-        // Controlla o aggiungi l'utente
-        const utente = await checkOrAddUser(googleId, profile);
-
-        // Trova il parcheggio per parcheggioId
-        const parcheggio = await Parcheggio.findById(parcheggioId);
-        if (!parcheggio) {
-            return res.status(404).json({ message: 'Parcheggio non trovato' });
-        }
-
-        // Crea una nuova recensione
-        const nuovaRecensione = new Recensione({
-            utente: utente._id,
-            parcheggio: parcheggio._id,
-            descrizione: descrizione,
-            valutazione: valutazione
-        });
-
-        // Salva la recensione
-        await nuovaRecensione.save();
-
-        // Aggiungi la recensione all'utente e al parcheggio
-        utente.recensioni.push(nuovaRecensione._id);
-        parcheggio.recensioni.push(nuovaRecensione._id);
-        await utente.save();
-        await parcheggio.save();
-
-        return res.status(200).json({ message: 'Recensione aggiunta con successo' });
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-};
 
 
 //export
