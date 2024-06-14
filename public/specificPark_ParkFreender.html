@@ -154,28 +154,27 @@
         const recensioni = await recensioniResponse.json();
 
         if (recensioni && recensioni.length > 0) {
-            const reviewContainer = document.querySelector('.reviewGrid');
-            reviewContainer.innerHTML = ''; // Rimuove recensioni predefinite
+        const reviewContainer = document.querySelector('.reviewGrid');
+        reviewContainer.innerHTML = ''; // Rimuove recensioni predefinite
 
-            recensioni.forEach(recensione => {
-                const reviewCard = document.createElement('div');
-                reviewCard.className = 'reviewCard';
+        recensioni.forEach(recensione => {
+          const reviewCard = document.createElement('div');
+          reviewCard.className = 'reviewCard';
 
-                reviewCard.innerHTML = `
-                    <div class="reviewImage"></div>
-                    <div class="reviewTextBox">
-                        <div class="reviewTextContent">
-                            <p class="reviewTitle">${recensione.utente ? recensione.utente.username : 'Utente sconosciuto'} ${recensione.valutazione}/5</p>
-                        </div>
-                        <p class="reviewDescription">${recensione.descrizione}</p>
-                    </div>
-                `;
-
-                reviewContainer.appendChild(reviewCard);
-            });
-        } else {
-            console.error('Nessuna recensione trovata');
-        }
+          reviewCard.innerHTML = `
+            <div class="reviewImage"></div>
+            <div class="reviewTextBox">
+                <div class="reviewTextContent">
+                    <p class="reviewTitle">${recensione.utente && recensione.utente.username ? recensione.utente.username : 'Utente sconosciuto'} ${recensione.valutazione}/5</p>
+                </div>
+                <p class="reviewDescription">${recensione.descrizione}</p>
+            </div>
+        `;
+          reviewContainer.appendChild(reviewCard);
+    });
+} else {
+    console.error('Nessuna recensione trovata');
+}
 
     } catch (error) {
         console.error('Errore nel recuperare il parcheggio o le recensioni:', error);

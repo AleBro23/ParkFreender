@@ -36,15 +36,28 @@ const getParcheggio= async (req, res) =>{
 //restituisce le recensioni di un parcheggio
 const getRecensioniParcheggio = async (req, res) => {
     try {
-        const parcheggio = await Parcheggio.findById(req.params.parcheggioId).populate('recensioni');
+        const parcheggio = await Parcheggio.findById(req.params.parcheggioId)
+            .populate({
+                path: 'recensioni',
+                populate: {
+                    path: 'utente',
+                    select: 'username' // Popola solo il campo 'username' dell'utente per il display della recensione
+                }
+            });
+        
         if (!parcheggio) {
             return res.status(404).json({ message: 'Parcheggio non trovato' });
         }
-        return res.status(200).json(parcheggio.recensioni);
+
+        const recensioniValide = parcheggio.recensioni.filter(recensione => recensione.utente);
+
+        
+        return res.status(200).json(recensioniValide);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 };
+
 
 //restituisce le statistiche di un parcheggio 
 const getStatParcheggio = async (req, res) =>{
