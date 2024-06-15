@@ -102,6 +102,26 @@ async function removeReview(reviewId, parkId) {
     }
 }
 
+async function fetchProfileInfo(accessToken) {
+    try {
+        const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Errore nel recuperare il profilo utente');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Errore in fetchProfileInfo:', error);
+        return null;
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     updateContent('favourite-parks'); // Carica i parcheggi preferiti per default
 });

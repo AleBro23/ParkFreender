@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const RecensioneSchema = mongoose.Schema(
     {
         utente: {
-            type: String, //per il googleId
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'Utente',
             required: true,
         },

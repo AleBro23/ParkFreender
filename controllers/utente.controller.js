@@ -53,20 +53,31 @@ const getRecensioniUtente = async (req, res) => {
 //aggiunge un utente
 const addUtente = async (req, res) => {
     try {
-        const { username, email, googleId, recensioni, veicoli } = req.body;
-        const nuovoUtente = new Utente({
+        const { username, email, googleId, recensioni, preferiti } = req.body;
+
+        // Verifica se l'utente esiste già
+        let utente = await Utente.findOne({ googleId });
+        if (utente) {
+            return res.status(400).json({ message: 'Utente già esistente' });
+        }
+
+        // Crea un nuovo utente
+        utente = new Utente({
             username,
             email,
             googleId,
             recensioni,
-            veicoli
+            preferiti
         });
-        await nuovoUtente.save();
-        res.status(201).json({ message: 'utente creato con successo' });
+
+        await utente.save();
+        res.status(201).json({ message: 'Utente creato con successo', utente });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+
 
 //aggiunge un veicolo all'utente
 const addVeicolo = async (req, res) =>{
@@ -101,9 +112,7 @@ const addRecensione = async (req, res) => {
         const { googleId, parcheggioId } = req.params;
         const { descrizione, valutazione, username, email } = req.body;
 
-
-        //lo cerco con il googleId
-        const utente = await Utente.findOne({ googleId });
+        const utente = await Utente.findOne({ googleId: googleId });
         if (!utente) {
             return res.status(404).json({ message: 'Utente non trovato' });
         }
@@ -116,16 +125,16 @@ const addRecensione = async (req, res) => {
 
         // Crea una nuova recensione
         const nuovaRecensione = new Recensione({
-            utente: googleId, // Salva il googleId dell'utente
+            utente: utente._id,
             parcheggio: parcheggio._id,
-            descrizione,
-            valutazione
+            descrizione: descrizione,
+            valutazione: valutazione
         });
 
         // Salva la recensione
         await nuovaRecensione.save();
 
-        // Aggiunge la recensione all'utente e al parcheggio
+        // Aggiungi la recensione all'utente e al parcheggio
         utente.recensioni.push(nuovaRecensione._id);
         parcheggio.recensioni.push(nuovaRecensione._id);
         await utente.save();
@@ -136,6 +145,7 @@ const addRecensione = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
 
 
 //aggiungo parcheggio preferito
